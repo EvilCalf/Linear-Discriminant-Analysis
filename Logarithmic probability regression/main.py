@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-def sigmoid(x):
+
+def sigmoid(x):  # Sigmoid函数
     """
     Sigmoid function.
     Input:
@@ -10,10 +11,11 @@ def sigmoid(x):
     Return:
         y: the same shape with x
     """
-    y =1.0 / ( 1 + np.exp(-x))
+    y = 1.0 / (1 + np.exp(-x))
     return y
 
-def newton(X, y):
+
+def newton(X, y):  # 牛顿法
     """
     Input:
         X: np.array with shape [N, 3]. Input.
@@ -28,30 +30,31 @@ def newton(X, y):
     z = X.dot(beta.T)
     #log-likehood
     old_l = 0
-    new_l = np.sum(y*z + np.log( 1+np.exp(z) ) )
+    new_l = np.sum(y * z + np.log(1 + np.exp(z)))
     iters = 0
-    while( np.abs(old_l-new_l) > 1e-5):
+    while (np.abs(old_l - new_l) > 1e-5):
         #shape [N, 1]
         p1 = np.exp(z) / (1 + np.exp(z))
         #shape [N, N]
-        p = np.diag((p1 * (1-p1)).reshape(N))
+        p = np.diag((p1 * (1 - p1)).reshape(N))
         #shape [1, 3]
         first_order = -np.sum(X * (y - p1), 0, keepdims=True)
         #shape [3, 3]
-        second_order = X.T .dot(p).dot(X)
+        second_order = X.T.dot(p).dot(X)
 
         #update
         beta -= first_order.dot(np.linalg.inv(second_order))
         z = X.dot(beta.T)
         old_l = new_l
-        new_l = np.sum(y*z + np.log( 1+np.exp(z) ) )
+        new_l = np.sum(y * z + np.log(1 + np.exp(z)))
 
         iters += 1
-    print ("iters: ", iters)
-    print (new_l)
+    print("iters: ", iters)
+    print(new_l)
     return beta
 
-def gradDescent(X, y):
+
+def gradDescent(X, y):  # 梯度下降法
     """
     Input:
         X: np.array with shape [N, 3]. Input.
@@ -71,7 +74,7 @@ def gradDescent(X, y):
         #shape [N, 1]
         p1 = np.exp(z) / (1 + np.exp(z))
         #shape [N, N]
-        p = np.diag((p1 * (1-p1)).reshape(N))
+        p = np.diag((p1 * (1 - p1)).reshape(N))
         #shape [1, 3]
         first_order = -np.sum(X * (y - p1), 0, keepdims=True)
 
@@ -79,11 +82,12 @@ def gradDescent(X, y):
         beta -= first_order * lr
         z = X.dot(beta.T)
 
-    l = np.sum(y*z + np.log( 1+np.exp(z) ) )
-    print (l)
+    l = np.sum(y * z + np.log(1 + np.exp(z)))
+    print(l)
     return beta
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
 
     #read data from csv file
     workbook = pd.read_csv("../data/watermelon_3a.csv", header=None)
@@ -100,14 +104,14 @@ if __name__=="__main__":
 
     #get optimal params beta with newton method
     beta = newton(X, y)
-    newton_left = -( beta[0, 0]*0.1 + beta[0, 2] ) / beta[0, 1]
-    newton_right = -( beta[0, 0]*0.9 + beta[0, 2] ) / beta[0, 1]
+    newton_left = -(beta[0, 0] * 0.1 + beta[0, 2]) / beta[0, 1]
+    newton_right = -(beta[0, 0] * 0.9 + beta[0, 2]) / beta[0, 1]
     plt.plot([0.1, 0.9], [newton_left, newton_right], 'g-')
 
     #get optimal params beta with gradient descent method
     beta = gradDescent(X, y)
-    grad_descent_left = -( beta[0, 0]*0.1 + beta[0, 2] ) / beta[0, 1]
-    grad_descent_right = -( beta[0, 0]*0.9 + beta[0, 2] ) / beta[0, 1]
+    grad_descent_left = -(beta[0, 0] * 0.1 + beta[0, 2]) / beta[0, 1]
+    grad_descent_right = -(beta[0, 0] * 0.9 + beta[0, 2]) / beta[0, 1]
     plt.plot([0.1, 0.9], [grad_descent_left, grad_descent_right], 'y-')
 
     plt.xlabel('density')
