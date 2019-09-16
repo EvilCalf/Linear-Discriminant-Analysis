@@ -128,3 +128,9 @@ if __name__ == "__main__":
     plt.ylabel('含糖率',fontproperties="SimHei")
     plt.title("対率回归结果",fontproperties="SimHei")
     plt.show()
+
+    """
+    最终牛顿法和梯度下降法求得的loss几乎一样，但是梯度下降是牛顿法的1000倍
+    当然牛顿法在高维度的矩阵求逆求导等等计算量过大
+    所以这就是为啥梯度下降还是使用最多的原因吧！
+    """
