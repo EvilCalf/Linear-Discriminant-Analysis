@@ -1,4 +1,3 @@
-# 机器学习线性判别分析3.5题
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -43,6 +42,6 @@ plt.scatter(X1[:, 0], X1[:, 1], c="r", label="-", marker="_")
 plt.plot([0, 1], [0, -Omiga[0] / Omiga[1]])
 plt.xlabel("密度", fontproperties="SimHei", fontsize=15, color="green")
 plt.ylabel("含糖率", fontproperties="SimHei", fontsize=15, color="green")
-plt.title(r"3.5 线性判别分析", fontproperties="SimHei", fontsize=25)
+plt.title(r"线性判别分析", fontproperties="SimHei", fontsize=25)
 plt.legend()
 plt.show()
