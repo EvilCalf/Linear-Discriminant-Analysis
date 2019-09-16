@@ -6,7 +6,7 @@ import numpy as np
 def liner_Regression(data_x, data_y, learningRate, Loopnum):
     Weight = np.ones(shape=(1, data_x.shape[1]))
     #全为1.0的array，和data_x.shape[1]相同大小当前是3
-    baise = np.array([[1]]) #b
+    baise = np.array([[1]]) #b初始为1
     for num in range(Loopnum):
         WXPlusB = np.dot(data_x, Weight.T) + baise
         # 求出当前权值下得出的预测值y
