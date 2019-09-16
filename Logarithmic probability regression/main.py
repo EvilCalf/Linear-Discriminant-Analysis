@@ -40,12 +40,12 @@ def newton(X, y):  # 牛顿法
         #转化成对角矩阵，在ω和b条件下的概率
         p = np.diag((p1 * (1 - p1)).reshape(N))
         #一阶导数shape [1, 3]
-        first_order = -np.sum(X * (y - p1), 0, keepdims=True)
+        First_Derivative = -np.sum(X * (y - p1), 0, keepdims=True)
         #二阶导数shape [3, 3]
-        second_order = X.T.dot(p).dot(X)
+        Second_Derivative = X.T.dot(p).dot(X)
 
         #更新，即原先权值-一阶导数和二阶导数逆矩阵的乘积
-        beta -= first_order.dot(np.linalg.inv(second_order))
+        beta -= First_Derivative.dot(np.linalg.inv(Second_Derivative))
         z = X.dot(beta.T)
         old_l = new_l
         new_l = np.sum(y * z + np.log(1 + np.exp(z)))
@@ -81,10 +81,10 @@ def gradDescent(X, y):  # 梯度下降法
         #转化成对角矩阵，在ω和b条件下的概率
         p = np.diag((p1 * (1 - p1)).reshape(N))
         #一阶导数shape [1, 3]
-        first_order = -np.sum(X * (y - p1), 0, keepdims=True)
+        First_Derivative = -np.sum(X * (y - p1), 0, keepdims=True)
 
         #更新，朝着梯度下降方向前进，并更新预测值
-        beta -= first_order * lr
+        beta -= First_Derivative * lr
         z = X.dot(beta.T)
         old_l = new_l
         new_l = np.sum(y * z + np.log(1 + np.exp(z)))
