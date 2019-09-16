@@ -98,17 +98,17 @@ def gradDescent(X, y):  # 梯度下降法
 if __name__ == "__main__":
 
     #read data from csv file
-    workbook = pd.read_csv("D:\MyProject\机器学习\data\watermelon_3a.csv", header=None)
+    workbook = pd.read_csv("D:\MyProject\机器学习\data\watermelon_3a.csv",
+                           header=None)
     #在序号三的位置扩展了一列，全为1，使得后续权值可以合并ω和b
-    workbook.insert(3, "3", 1) 
-    X = workbook.values[:, 1:-1] #截取从第二列到倒数第一列为止，不含最后一列
-    y = workbook.values[:, 4].reshape(-1, 1) #y为第5列
+    workbook.insert(3, "3", 1)
+    X = workbook.values[:, 1:-1]  #截取从第二列到倒数第一列为止，不含最后一列
+    y = workbook.values[:, 4].reshape(-1, 1)  #y为第5列
 
     #分别取出正例和反例
     positive_data = workbook.values[workbook.values[:, 4] == 1.0, :]
     negative_data = workbook.values[workbook.values[:, 4] == 0, :]
 
-    
     plt.plot(positive_data[:, 1], positive_data[:, 2], 'bo')
     plt.plot(negative_data[:, 1], negative_data[:, 2], 'r+')
 
@@ -124,11 +124,10 @@ if __name__ == "__main__":
     grad_descent_right = -(beta[0, 0] * 0.9 + beta[0, 2]) / beta[0, 1]
     plt.plot([0.1, 0.9], [grad_descent_left, grad_descent_right], 'y-')
 
-    plt.xlabel('密度',fontproperties="SimHei")
-    plt.ylabel('含糖率',fontproperties="SimHei")
-    plt.title("対率回归结果",fontproperties="SimHei")
+    plt.xlabel('密度', fontproperties="SimHei")
+    plt.ylabel('含糖率', fontproperties="SimHei")
+    plt.title("対率回归结果", fontproperties="SimHei")
     plt.show()
-
     """
     最终牛顿法和梯度下降法求得的loss几乎一样，但是梯度下降是牛顿法的1000倍
     当然牛顿法在高维度的矩阵求逆求导等等计算量过大
