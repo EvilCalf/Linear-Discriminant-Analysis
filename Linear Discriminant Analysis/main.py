@@ -26,14 +26,14 @@ X0 = np.array(data[:8])  # 读到序列7截止
 X1 = np.array(data[8:])  # 从序列8的元素开始读
 # 求正反例均值
 # axis = 0：压缩行，对各列求均值，返回 1* n 矩阵，reshape(-1,1)转换成1列：
-miu0 = np.mean(X0, axis=0).reshape((-1, 1))
-miu1 = np.mean(X1, axis=0).reshape((-1, 1))
+μ0 = np.mean(X0, axis=0).reshape((-1, 1))
+μ1 = np.mean(X1, axis=0).reshape((-1, 1))
 # 求协方差
 cov0 = np.cov(X0, rowvar=False)
 cov1 = np.cov(X1, rowvar=False)
 # 求出w
 S_w = np.mat(cov0 + cov1)  # 类内散度矩阵
-Omiga = S_w.I * (miu0 - miu1)  #求出直线ω方向，用散度矩阵的逆矩阵乘上均值之差（均值肯定在直线上，肯定同方向）
+Omiga = S_w.I * (μ0 - μ1)  #求出直线ω方向，用散度矩阵的逆矩阵乘上均值之差（均值肯定在直线上，肯定同方向）
 # 画出点、直线
 plt.scatter(X0[:, 0], X0[:, 1], c="b", label="+", marker="+")
 plt.scatter(X1[:, 0], X1[:, 1], c="r", label="-", marker="_")

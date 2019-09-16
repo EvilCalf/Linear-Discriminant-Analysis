@@ -22,14 +22,14 @@ def newton(X, y):  # 牛顿法
         X: np.array with shape [N, 3]. Input.
         y: np.array with shape [N, 1]. Label.
     Return:
-        beta: np.array with shape [1, 3]. Optimal params with newton method
+        weight: np.array with shape [1, 3]. Optimal params with newton method
     """
     #N条数据
     N = X.shape[0]
     #初始权值
-    beta = np.ones((1, 3))
+    weight = np.ones((1, 3))
     #训练集的数据与当前的权值矩阵相乘，得预测值
-    z = X.dot(beta.T)
+    z = X.dot(weight.T)
     #log-likehood
     old_l = 0
     new_l = np.sum(y * z + np.log(1 + np.exp(z)))
@@ -45,15 +45,15 @@ def newton(X, y):  # 牛顿法
         Second_Derivative = X.T.dot(p).dot(X)
 
         #更新，即原先权值-一阶导数和二阶导数逆矩阵的乘积
-        beta -= First_Derivative.dot(np.linalg.inv(Second_Derivative))
-        z = X.dot(beta.T)
+        weight -= First_Derivative.dot(np.linalg.inv(Second_Derivative))
+        z = X.dot(weight.T)
         old_l = new_l
         new_l = np.sum(y * z + np.log(1 + np.exp(z)))
 
         iters += 1
     print("iters: ", iters)
     print(new_l)
-    return beta
+    return weight
 
 
 def gradDescent(X, y):  # 梯度下降法
@@ -62,16 +62,16 @@ def gradDescent(X, y):  # 梯度下降法
         X: np.array with shape [N, 3]. Input.
         y: np.array with shape [N, 1]. Label.
     Return:
-        beta: np.array with shape [1, 3]. Optimal params with gradient descent method
+        weight: np.array with shape [1, 3]. Optimal params with gradient descent method
     """
     #N条数据
     N = X.shape[0]
     #学习率
     lr = 0.05
     #初始化权值
-    beta = np.ones((1, 3)) * 0.1
+    weight = np.ones((1, 3)) * 0.1
     #训练集的数据与当前的权值矩阵相乘，得预测值
-    z = X.dot(beta.T)
+    z = X.dot(weight.T)
     old_l = 0
     new_l = np.sum(y * z + np.log(1 + np.exp(z)))
     iters = 0
@@ -84,15 +84,15 @@ def gradDescent(X, y):  # 梯度下降法
         First_Derivative = -np.sum(X * (y - p1), 0, keepdims=True)
 
         #更新，朝着梯度下降方向前进，并更新预测值
-        beta -= First_Derivative * lr
-        z = X.dot(beta.T)
+        weight -= First_Derivative * lr
+        z = X.dot(weight.T)
         old_l = new_l
         new_l = np.sum(y * z + np.log(1 + np.exp(z)))
         iters += 1
 
     print("iters: ", iters)
     print(new_l)
-    return beta
+    return weight
 
 
 if __name__ == "__main__":
@@ -113,20 +113,20 @@ if __name__ == "__main__":
     plt.plot(negative_data[:, 1], negative_data[:, 2], 'r+')
 
     #牛顿法绿色
-    beta = newton(X, y)
-    newton_left = -(beta[0, 0] * 0.1 + beta[0, 2]) / beta[0, 1]
-    newton_right = -(beta[0, 0] * 0.9 + beta[0, 2]) / beta[0, 1]
+    weight = newton(X, y)
+    newton_left = -(weight[0, 0] * 0.1 + weight[0, 2]) / weight[0, 1]
+    newton_right = -(weight[0, 0] * 0.9 + weight[0, 2]) / weight[0, 1]
     plt.plot([0.1, 0.9], [newton_left, newton_right], 'g-')
 
     #梯度下降黄色
-    beta = gradDescent(X, y)
-    grad_descent_left = -(beta[0, 0] * 0.1 + beta[0, 2]) / beta[0, 1]
-    grad_descent_right = -(beta[0, 0] * 0.9 + beta[0, 2]) / beta[0, 1]
+    weight = gradDescent(X, y)
+    grad_descent_left = -(weight[0, 0] * 0.1 + weight[0, 2]) / weight[0, 1]
+    grad_descent_right = -(weight[0, 0] * 0.9 + weight[0, 2]) / weight[0, 1]
     plt.plot([0.1, 0.9], [grad_descent_left, grad_descent_right], 'y-')
 
     plt.xlabel('密度', fontproperties="SimHei")
     plt.ylabel('含糖率', fontproperties="SimHei")
-    plt.title("対率回归结果", fontproperties="SimHei")
+    plt.title("対率回归结果ln(y(1-y))", fontproperties="SimHei")
     plt.show()
     """
     最终牛顿法和梯度下降法求得的loss几乎一样，但是梯度下降是牛顿法的1000倍
