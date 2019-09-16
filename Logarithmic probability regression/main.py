@@ -37,7 +37,7 @@ def newton(X, y):  # 牛顿法
     while (np.abs(old_l - new_l) > 1e-5):
         #y=1的概率，shape [N, 1]
         p1 = np.exp(z) / (1 + np.exp(z))
-        #转化成对角矩阵，在ω和b条件下的概率
+        #转化成对角矩阵，ln（y（1-y))=ω^Tx+b为线性
         p = np.diag((p1 * (1 - p1)).reshape(N))
         #一阶导数shape [1, 3]
         First_Derivative = -np.sum(X * (y - p1), 0, keepdims=True)
@@ -78,7 +78,7 @@ def gradDescent(X, y):  # 梯度下降法
     while (np.abs(old_l - new_l) > 1e-5):
         #y=1的概率，shape [N, 1]
         p1 = np.exp(z) / (1 + np.exp(z))
-        #转化成对角矩阵，在ω和b条件下的概率
+        #转化成对角矩阵，ln（y（1-y))=ω^Tx+b为线性
         p = np.diag((p1 * (1 - p1)).reshape(N))
         #一阶导数shape [1, 3]
         First_Derivative = -np.sum(X * (y - p1), 0, keepdims=True)
