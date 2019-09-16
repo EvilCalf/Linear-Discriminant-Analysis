@@ -8,18 +8,18 @@ def liner_Regression(data_x, data_y, learningRate, Loopnum):
     #全为1.0的array，和data_x.shape[1]相同大小当前是3
     b = np.array([[1]])  #b初始为1
     for num in range(Loopnum):
-        WXPlusB = np.dot(data_x, Weight.T) + b
+        PredictiveValue = np.dot(data_x, Weight.T) + b
         # 求出当前权值下得出的预测值y
-        loss = np.dot((data_y - WXPlusB).T, data_y - WXPlusB) / data_y.shape[0]
+        loss = np.dot((data_y - PredictiveValue).T, data_y - PredictiveValue) / data_y.shape[0]
         #loss就是实际值与预测值的差的平均数
         """
         求矩阵导数，得到新的变化率w和b，b的求法也就是相当于矩阵乘全1的那一列
         利用最小二乘法，最后得到一个ω的表达式
         """
         w_gradient = -(2 / data_x.shape[0]) * np.dot(
-            (data_y - WXPlusB).T, data_x)
+            (data_y - PredictiveValue).T, data_x)
         b_gradient = -2 * np.dot(
-            (data_y - WXPlusB).T,
+            (data_y - PredictiveValue).T,
             np.ones(shape=[data_x.shape[0], 1])) / data_x.shape[0]
         #得到新的权值
         Weight = Weight - learningRate * w_gradient

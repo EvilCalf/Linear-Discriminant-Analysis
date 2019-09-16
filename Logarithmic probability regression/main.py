@@ -29,14 +29,14 @@ def newton(X, y):  # 牛顿法
     #初始权值
     weight = np.ones((1, 3))
     #训练集的数据与当前的权值矩阵相乘，得预测值
-    z = X.dot(weight.T)
+    PredictiveValue = X.dot(weight.T)
     #log-likehood
     old_l = 0
-    new_l = np.sum(y * z + np.log(1 + np.exp(z)))
+    new_l = np.sum(y * PredictiveValue + np.log(1 + np.exp(PredictiveValue)))
     iters = 0
     while (np.abs(old_l - new_l) > 1e-5):
         #y=1的概率，shape [N, 1]
-        p1 = np.exp(z) / (1 + np.exp(z))
+        p1 = np.exp(PredictiveValue) / (1 + np.exp(PredictiveValue))
         #转化成对角矩阵，ln（y（1-y))=ω^Tx+b为线性
         p = np.diag((p1 * (1 - p1)).reshape(N))
         #一阶导数shape [1, 3]
@@ -46,9 +46,9 @@ def newton(X, y):  # 牛顿法
 
         #更新，即原先权值-一阶导数和二阶导数逆矩阵的乘积
         weight -= First_Derivative.dot(np.linalg.inv(Second_Derivative))
-        z = X.dot(weight.T)
+        PredictiveValue = X.dot(weight.T)
         old_l = new_l
-        new_l = np.sum(y * z + np.log(1 + np.exp(z)))
+        new_l = np.sum(y * PredictiveValue + np.log(1 + np.exp(PredictiveValue)))
 
         iters += 1
     print("iters: ", iters)
@@ -67,27 +67,27 @@ def gradDescent(X, y):  # 梯度下降法
     #N条数据
     N = X.shape[0]
     #学习率
-    lr = 0.05
+    learningRate = 0.05
     #初始化权值
     weight = np.ones((1, 3)) * 0.1
     #训练集的数据与当前的权值矩阵相乘，得预测值
-    z = X.dot(weight.T)
+    PredictiveValue = X.dot(weight.T)
     old_l = 0
-    new_l = np.sum(y * z + np.log(1 + np.exp(z)))
+    new_l = np.sum(y * PredictiveValue + np.log(1 + np.exp(PredictiveValue)))
     iters = 0
     while (np.abs(old_l - new_l) > 1e-5):
         #y=1的概率，shape [N, 1]
-        p1 = np.exp(z) / (1 + np.exp(z))
+        p1 = np.exp(PredictiveValue) / (1 + np.exp(PredictiveValue))
         #转化成对角矩阵，ln（y（1-y))=ω^Tx+b为线性
         p = np.diag((p1 * (1 - p1)).reshape(N))
         #一阶导数shape [1, 3]
         First_Derivative = -np.sum(X * (y - p1), 0, keepdims=True)
 
         #更新，朝着梯度下降方向前进，并更新预测值
-        weight -= First_Derivative * lr
-        z = X.dot(weight.T)
+        weight -= First_Derivative * learningRate
+        PredictiveValue = X.dot(weight.T)
         old_l = new_l
-        new_l = np.sum(y * z + np.log(1 + np.exp(z)))
+        new_l = np.sum(y * PredictiveValue + np.log(1 + np.exp(PredictiveValue)))
         iters += 1
 
     print("iters: ", iters)
