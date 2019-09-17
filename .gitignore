@@ -63,4 +63,4 @@ yarn-debug.log*
 yarn-error.log*
 
 #python
-/__pycache__/
+__pycache__
