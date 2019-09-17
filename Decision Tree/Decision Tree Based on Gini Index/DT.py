@@ -116,7 +116,7 @@ def Predict(root, DateSet_sample):
 def PredictAccuracy(root, DateSet_test):
     '''
     calculating accuracy of prediction on test set
-    预剪枝
+
     @param root: Node, root Node of the decision tree
     @param DateSet_test: dataframe, test data set
     @return accuracy, float,
@@ -133,7 +133,7 @@ def PredictAccuracy(root, DateSet_test):
 def PrePurn(DateSet_train, DateSet_test):
     '''
     pre-purning to generating a decision tree
-    后剪枝
+    预剪枝
     @param DateSet_train: dataframe, the training set to generating a tree
     @param DateSet_test: dataframe, the testing set for purning decision
     @return root: Node, root of the tree using purning
@@ -218,7 +218,7 @@ def PrePurn(DateSet_train, DateSet_test):
 def PostPurn(root, DateSet_test):
     '''
     pre-purning to generating a decision tree
-
+    后剪枝
     @param root: Node, root of the tree
     @param DateSet_test: dataframe, the testing set for purning decision
     @return accuracy score through traversal the tree
@@ -259,8 +259,8 @@ def NodeLabel(label_arr):
     '''
     calculating the appeared label and it's counts
 
-    @param label_arr: data array for class labels
-    @return label_count: dict, the appeared label and it's counts
+    @param label_arr: data array for class labels 输入参数为一个arry
+    @return label_count: dict, the appeared label and it's counts 输出为不同标签下不同的个数
     '''
     label_count = {}  # store count of label
 
@@ -299,13 +299,13 @@ optimal attribution selection in CART algorithm based on gini index
 def OptAttr_Gini(DateSet):
     '''
     find the optimal attributes of current data_set based on gini index
-
-    @param DateSet: the pandas dataframe of the data_set
-    @return opt_attr:  the optimal attribution for branch
-    @return div_value: for discrete variable value = 0
+    利用基尼系数找出合适的属性作为划分依据
+    @param DateSet: the pandas dataframe of the data_set  输入数据集
+    @return opt_attr:  the optimal attribution for branch  输出合适的属性
+    @return div_value: for discrete variable value = 0    输出划分权值
                        for continuous variable value = t for bisection divide value
     '''
-    gini_index = float('Inf')
+    gini_index = float('Inf') # 初始值负无穷
     for attr_id in DateSet.columns[1:-1]:
         gini_index_tmp, div_value_tmp = InfoGain(DateSet, attr_id)
         if gini_index_tmp < gini_index:
@@ -386,12 +386,12 @@ optimal attribution selection in ID3 algorithm based on information entropy
 
 def OptAttr_Ent(DateSet):
     '''
-    find the optimal attributes of current data_set based on info entropy
-
-    @param DateSet: the pandas dataframe of the data_set
+    find the optimal attributes of current data_set
+    利用信息熵找到最合适的下一个分类的属性
+    @param DateSet: the pandas dataframe of the data_set 
     @return opt_attr:  the optimal attribution for branch
     @return div_value: for discrete variable value = 0
-                       for continuous variable value = t for bisection divide value
+                    for continuous variable value = t for bisection divide value
     '''
     info_gain = 0
 
@@ -408,12 +408,12 @@ def OptAttr_Ent(DateSet):
 def InfoGain(DateSet, attr_id):
     '''
     calculating the information gain of an attribution
-
-    @param DateSet:      dataframe, the pandas dataframe of the data_set
-    @param attr_id: the target attribution in DateSet
-    @return info_gain: the information gain of current attribution
-    @return div_value: for discrete variable, value = 0
-                   for continuous variable, value = t (the division value)
+    计算属性的信息增益
+    @param DateSet:      dataframe, the pandas dataframe of the data_set 参数之一数据集
+    @param attr_id: the target attribution in DateSet                    参数之二属性
+    @return info_gain: the information gain of current attribution       输出当前划分的信息增益
+    @return div_value: for discrete variable, value = 0                  输出之二划分权值
+                for continuous variable, value = t (the division value)
     '''
     info_gain = InfoEnt(DateSet.values[:, -1])  # info_gain for the whole label
     div_value = 0  # div_value for continuous attribute
@@ -454,7 +454,7 @@ def InfoGain(DateSet, attr_id):
 def InfoEnt(label_arr):
     '''
     calculating the information entropy of an attribution
-
+    计算信息熵
     @param label_arr: ndarray, class label array of data_arr
     @return ent: the information entropy of current attribution
     '''
@@ -500,7 +500,7 @@ def TreeToGraph(i, g, root):
     @param root: the root node
 
     @return i: node number after modified
-#     @return g: pydotplus.graphviz.Dot() object after modified
+    @return g: pydotplus.graphviz.Dot() object after modified
     @return g_node: the current root node in graphviz
     '''
     try:

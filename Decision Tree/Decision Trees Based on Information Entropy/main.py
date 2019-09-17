@@ -50,4 +50,4 @@ print("\naverage accuracy: %.3f" % (accuracy_sum / k))
 # dicision tree visualization using pydotplus.graphviz
 root = decision_tree.TreeGenerate(DateSet)
 
-decision_tree.DrawPNG(root, "Decision Trees Based on Information Entropy.png")
+decision_tree.DrawPNG(root, "Decision Tree/Decision Trees Based on Information Entropy/Decision Trees Based on Information Entropy.png")

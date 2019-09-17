@@ -10,25 +10,25 @@ import DT as decision_tree
 # 划分训练集和测试集
 index_train = [0, 1, 2, 5, 6, 9, 13, 14, 15, 16]
 
-DataSet_train = DataSet.iloc(index_train)
+DataSet_train = DataSet.iloc[index_train]
 DataSet_test = DataSet.drop(index_train)
 
 # generate a full tree
 root = decision_tree.TreeGenerate(DataSet_train)
-decision_tree.DrawPNG(root, "decision_tree_full.png")
+decision_tree.DrawPNG(root, "Decision Tree/Decision Tree Based on Gini Index/Decision Tree Based on Gini Index.png")
 print("accuracy of full tree: %.3f" %
       decision_tree.PredictAccuracy(root, DataSet_test))
 
 # pre-purning 预剪枝
 root = decision_tree.PrePurn(DataSet_train, DataSet_test)
-decision_tree.DrawPNG(root, "decision_tree_pre.png")
+decision_tree.DrawPNG(root, "Decision Tree/Decision Tree Based on Gini Index/decision_tree_pre.png")
 print("accuracy of pre-purning tree: %.3f" %
       decision_tree.PredictAccuracy(root, DataSet_test))
 
 # # post-puring 后剪枝
 root = decision_tree.TreeGenerate(DataSet_train)
 decision_tree.PostPurn(root, DataSet_test)
-decision_tree.DrawPNG(root, "decision_tree_post.png")
+decision_tree.DrawPNG(root, "Decision Tree/Decision Tree Based on Gini Index/decision_tree_post.png")
 print("accuracy of post-purning tree: %.3f" %
       decision_tree.PredictAccuracy(root, DataSet_test))
 
