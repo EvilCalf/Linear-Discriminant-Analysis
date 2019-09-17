@@ -1,6 +1,3 @@
-'''
-import data and pre-analysis through data visualization
-'''
 # using pandas dataframe for .csv read which contains chinese char.
 import pandas as pd
 
@@ -18,25 +15,6 @@ root = decision_tree.TreeGenerate(df)
 # df = df.drop(['色泽','根蒂','敲声','纹理','脐部','触感'], 1)
 
 accuracy_scores = []
-'''
-from random import sample
-for i in range(10):
-    train = sample(range(len(df.index)), int(1*len(df.index)/2))
-
-    df_train = df.iloc[train]
-    df_test = df.drop(train)
-    # generate the tree
-    root = decision_tree.TreeGenerate(df_train)
-    # test the accuracy
-    pred_true = 0
-    for i in df_test.index:
-        label = decision_tree.Predict(root, df[df.index == i])
-        if label == df_test[df_test.columns[-1]][i]:
-            pred_true += 1
-
-    accuracy = pred_true / len(df_test.index)
-    accuracy_scores.append(accuracy)
-'''
 
 # k-folds cross prediction
 
