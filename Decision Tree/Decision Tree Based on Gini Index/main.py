@@ -1,6 +1,3 @@
-'''
-import data and pre-analysis through data visualization
-'''
 # using pandas dataframe for .csv read which contains chinese char.
 import pandas as pd
 

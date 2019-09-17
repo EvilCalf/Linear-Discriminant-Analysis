@@ -61,3 +61,6 @@ local.sbt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#python
+/_pycache_/
