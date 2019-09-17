@@ -1,3 +1,4 @@
+#Vue
 .DS_Store
 node_modules
 /dist
@@ -6,12 +7,12 @@ node_modules
 .classpath
 .project
 .settings/
- 
+
 #Intel Idea
 .idea
 *.iml
 *.iws
- 
+
 #Maven
 log
 target
@@ -22,25 +23,24 @@ pom.xml.next
 release.properties
 dependcy-reduced-pom.xml
 buildNumber.properties
- 
+
 #java
 *.class
 *.war
 *.ear
- 
-# bak
+
+#bak
 *.bak
 /bin/
- 
-# sbt
+
+#sbt
 /target/
 /project/target/
 /project/project/target/
 /project/project/project/target/
 /build-sbt/
 local.sbt
- 
- 
+
 # spring
 *.springBeans
 
