@@ -47,7 +47,7 @@ def TreeGenerate(DateSet):
             return new_node
 
         # get the optimal attribution for a new branching
-        # 利用基尼系数找出下一个合理的划分标准
+        # 利用基尼指数找出下一个合理的划分标准
         new_node.attr, div_value = OptAttr_Gini(DateSet)  # via Gini index
 
         # recursion 递归
@@ -299,15 +299,16 @@ optimal attribution selection in CART algorithm based on gini index
 def OptAttr_Gini(DateSet):
     '''
     find the optimal attributes of current data_set based on gini index
-    利用基尼系数找出合适的属性作为划分依据
+    利用基尼指数找出合适的属性作为划分依据
     @param DateSet: the pandas dataframe of the data_set  输入数据集
     @return opt_attr:  the optimal attribution for branch  输出合适的属性
     @return div_value: for discrete variable value = 0    输出划分权值
                        for continuous variable value = t for bisection divide value
     '''
-    gini_index = float('Inf') # 初始值负无穷
-    for attr_id in DateSet.columns[1:-1]:
-        gini_index_tmp, div_value_tmp = InfoGain(DateSet, attr_id)
+    gini_index = float('Inf') # 初始值正无穷
+    # 截取序列1到倒数第二个，遍历当前可用的属性找出基尼指数最小的属性
+    for attr_id in DateSet.columns[1:-1]: 
+        gini_index_tmp, div_value_tmp = GiniIndex(DateSet, attr_id) # 求出当前属性的信息熵
         if gini_index_tmp < gini_index:
             gini_index = gini_index_tmp
             opt_attr = attr_id
@@ -319,7 +320,7 @@ def OptAttr_Gini(DateSet):
 def GiniIndex(DateSet, attr_id):
     '''
     calculating the gini index of an attribution
-
+    计算属性的基尼指数
     @param DateSet:      dataframe, the pandas dataframe of the data_set
     @param attr_id: the target attribution in DateSet
     @return gini_index: the gini index of current attribution
@@ -365,7 +366,7 @@ def GiniIndex(DateSet, attr_id):
 def Gini(label_arr):
     '''
     calculating the gini value of an attribution
-
+    计算属性的基尼值
     @param label_arr: ndarray, class label array of data_arr
     @return gini: the information entropy of current attribution
     '''

@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import random
 
 data_file_encode = "utf-8"
 with open("D:\MyProject\机器学习\data\watermelon_2.csv",
@@ -8,10 +10,12 @@ with open("D:\MyProject\机器学习\data\watermelon_2.csv",
 
 import DT as decision_tree
 # 划分训练集和测试集
-index_train = [0, 1, 2, 5, 6, 9, 13, 14, 15, 16]
+index=DataSet.shape[0]-1
+index_train=np.arange(index)
+rand_train=np.random.choice(index_train,size=random.randint(int((index+1)/2),index),replace=False)
 
-DataSet_train = DataSet.iloc[index_train]
-DataSet_test = DataSet.drop(index_train)
+DataSet_train = DataSet.iloc[rand_train]
+DataSet_test = DataSet.drop(rand_train)
 
 # generate a full tree
 root = decision_tree.TreeGenerate(DataSet_train)
