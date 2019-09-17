@@ -10,7 +10,7 @@ with open("D:\MyProject\机器学习\data\watermelon_3.csv",
           encoding=data_file_encode) as data_file:
     df = pd.read_csv(data_file)
 
-import Tree as decision_tree
+import DT as decision_tree
 
 root = decision_tree.TreeGenerate(df)
 
