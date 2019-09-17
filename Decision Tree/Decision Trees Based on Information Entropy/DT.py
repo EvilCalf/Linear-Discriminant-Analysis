@@ -39,21 +39,25 @@ def TreeGenerate(DateSet):
 
     label_count = NodeLabel(label_arr)
     if label_count:  # assert the label_count isn's empty
+        # 该节点最多数的标签即是该结点的判断结果
         new_node.label = max(label_count, key=label_count.get)
 
         # end if there is only 1 class in current node data
         # end if attribution array is empty
+        # 如果只有一种情形或者已经没有标签了，那么决策树就已经构建好了
         if len(label_count) == 1 or len(label_arr) == 0:
             return new_node
 
         # get the optimal attribution for a new branching
+        # 找出下一个合理的划分标准
         new_node.attr, div_value = OptAttr(DateSet)
 
         # recursion
         if div_value == 0:  # categoric variable
             value_count = ValueCount(DateSet[new_node.attr])
             for value in value_count:
-                DateSet_v = DateSet[DateSet[new_node.attr].isin([value])]  # get sub set
+                DateSet_v = DateSet[DateSet[new_node.attr].isin(
+                    [value])]  # get sub set
                 # delete current attribution
                 DateSet_v = DateSet_v.drop(new_node.attr, 1)
                 new_node.attr_down[value] = TreeGenerate(DateSet_v)
@@ -61,7 +65,8 @@ def TreeGenerate(DateSet):
         else:  # continuous variable # left and right child
             value_l = "<=%.3f" % div_value
             value_r = ">%.3f" % div_value
-            DateSet_v_l = DateSet[DateSet[new_node.attr] <= div_value]  # get sub set
+            DateSet_v_l = DateSet[DateSet[new_node.attr] <=
+                                  div_value]  # get sub set
             DateSet_v_r = DateSet[DateSet[new_node.attr] > div_value]
 
             new_node.attr_down[value_l] = TreeGenerate(DateSet_v_l)
@@ -114,8 +119,8 @@ def Predict(root, DateSet_sample):
 '''
 calculating the appeared label and it's counts
 
-@param label_arr: data array for class labels
-@return label_count: dict, the appeared label and it's counts
+@param label_arr: data array for class labels 输入参数为一个arry
+@return label_count: dict, the appeared label and it's counts 输出为不同标签下不同的个数
 '''
 
 
@@ -163,7 +168,7 @@ find the optimal attributes of current data_set
 
 def OptAttr(DateSet):
     info_gain = 0
-
+    # 遍历除了标签以外的所有因素
     for attr_id in DateSet.columns[1:-1]:
         info_gian_tmp, div_value_tmp = InfoGain(DateSet, attr_id)
         if info_gian_tmp > info_gain:
@@ -177,24 +182,25 @@ def OptAttr(DateSet):
 '''
 calculating the information gain of an attribution
 
-@param DateSet:      dataframe, the pandas dataframe of the data_set
-@param attr_id: the target attribution in DateSet
-@return info_gain: the information gain of current attribution
-@return div_value: for discrete variable, value = 0
+@param DateSet:      dataframe, the pandas dataframe of the data_set 参数之一数据集
+@param attr_id: the target attribution in DateSet                    参数之二因素
+@return info_gain: the information gain of current attribution       输出当前划分的信息增益
+@return div_value: for discrete variable, value = 0                  输出之二划分权值
                for continuous variable, value = t (the division value)
 '''
 
 
 def InfoGain(DateSet, index):
-    info_gain = InfoEnt(DateSet.values[:, -1])  # info_gain for the whole label
+    info_gain = InfoEnt(DateSet.values[:, -1])  # info_gain for the whole label 得出当前节点的信息熵
     div_value = 0  # div_value for continuous attribute
 
     n = len(DateSet[index])  # the number of sample
-    # 1.for continuous variable using method of bisection
+    # 1.for continuous variable using method of bisection（连续变量）
     if DateSet[index].dtype == float:
         sub_info_ent = {}  # store the div_value (div) and it's subset entropy
 
-        DateSet = DateSet.sort_values([index], ascending=1)  # sorting via column
+        DateSet = DateSet.sort_values([index],
+                                      ascending=1)  # sorting via column
         DateSet = DateSet.reset_index(drop=True)
 
         data_arr = DateSet[index]
@@ -209,7 +215,7 @@ def InfoGain(DateSet, index):
                                           key=lambda x: x[1])
         info_gain -= sub_info_ent_max
 
-    # 2.for discrete variable (categoric variable)
+    # 2.for discrete variable (categoric variable)（离散变量）
     else:
         data_arr = DateSet[index]
         label_arr = DateSet[DateSet.columns[-1]]
@@ -224,7 +230,7 @@ def InfoGain(DateSet, index):
 
 '''
 calculating the information entropy of an attribution
-
+计算信息熵
 @param label_arr: ndarray, class label array of data_arr
 @return ent: the information entropy of current attribution
 '''
