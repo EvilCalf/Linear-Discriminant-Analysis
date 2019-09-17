@@ -23,15 +23,13 @@ class Node(object):
         self.attr_down = attr_down_init
 
 
-''' 
-Branching for decision tree using recursion 
-决策树的生成是一个递归的过程
-@param DateSet: the pandas dataframe of the data_set 参数给一个数据集
-@return root: Node, the root node of decision tree 返回决策树的根节点
-'''
-
-
 def TreeGenerate(DateSet):
+    ''' 
+    Branching for decision tree using recursion 
+    决策树的生成是一个递归的过程
+    @param DateSet: the pandas dataframe of the data_set 参数给一个数据集
+    @return root: Node, the root node of decision tree 返回决策树的根节点
+    '''
     # generating a new root node
     new_node = Node(None, None, {})
     # DateSet的倒数第一列是标签，也就是该数据集下的好坏瓜
@@ -49,7 +47,7 @@ def TreeGenerate(DateSet):
             return new_node
 
         # get the optimal attribution for a new branching
-        # 找出下一个合理的划分标准
+        # 利用信息熵找出下一个合理的划分标准
         new_node.attr, div_value = OptAttr(DateSet)
 
         # recursion 递归
@@ -76,15 +74,12 @@ def TreeGenerate(DateSet):
     return new_node
 
 
-'''
-make a predict based on root
-
-@param root: Node, root Node of the decision tree 输入根节点
-@param DateSet_sample: dataframe, a sample line 
-'''
-
-
 def Predict(root, DateSet_sample):
+    '''
+    make a predict based on root
+    @param root: Node, root Node of the decision tree 输入根节点
+    @param DateSet_sample: dataframe, a sample line 
+    '''
     try:
         import re  # using Regular Expression to get the number in string
     except ImportError:
@@ -117,15 +112,13 @@ def Predict(root, DateSet_sample):
     return root.label
 
 
-'''
-calculating the appeared label and it's counts
-
-@param label_arr: data array for class labels 输入参数为一个arry
-@return label_count: dict, the appeared label and it's counts 输出为不同标签下不同的个数
-'''
-
-
 def NodeLabel(label_arr):
+    '''
+    calculating the appeared label and it's counts
+
+    @param label_arr: data array for class labels 输入参数为一个arry
+    @return label_count: dict, the appeared label and it's counts 输出为不同标签下不同的个数
+    '''
     label_count = {}  # store count of label
 
     for label in label_arr:
@@ -137,15 +130,13 @@ def NodeLabel(label_arr):
     return label_count
 
 
-'''
-calculating the appeared value for categoric attribute and it's counts
-
-@param data_arr: data array for an attribute
-@return value_count: dict, the appeared value and it's counts
-'''
-
-
 def ValueCount(data_arr):
+    '''
+    calculating the appeared value for categoric attribute and it's counts
+
+    @param data_arr: data array for an attribute
+    @return value_count: dict, the appeared value and it's counts
+    '''
     value_count = {}  # store count of value
 
     for label in data_arr:
@@ -157,19 +148,17 @@ def ValueCount(data_arr):
     return value_count
 
 
-'''
-find the optimal attributes of current data_set
-
-@param DateSet: the pandas dataframe of the data_set 
-@return opt_attr:  the optimal attribution for branch
-@return div_value: for discrete variable value = 0
-                   for continuous variable value = t for bisection divide value
-'''
-
-
 def OptAttr(DateSet):
+    '''
+    find the optimal attributes of current data_set
+    找到最合适的下一个分类的属性
+    @param DateSet: the pandas dataframe of the data_set 
+    @return opt_attr:  the optimal attribution for branch
+    @return div_value: for discrete variable value = 0
+                    for continuous variable value = t for bisection divide value
+    '''
     info_gain = 0
-    # 遍历除了标签以外的所有属性，找到信息增益最大的分类标签
+    # 遍历除了标签以外的所有属性，找到信息增益最大的分类属性
     for attr_id in DateSet.columns[1:-1]:
         info_gian_tmp, div_value_tmp = InfoGain(DateSet, attr_id)
         if info_gian_tmp > info_gain:
@@ -180,19 +169,18 @@ def OptAttr(DateSet):
     return opt_attr, div_value
 
 
-'''
-calculating the information gain of an attribution
-计算属性的信息增益
-@param DateSet:      dataframe, the pandas dataframe of the data_set 参数之一数据集
-@param attr_id: the target attribution in DateSet                    参数之二属性
-@return info_gain: the information gain of current attribution       输出当前划分的信息增益
-@return div_value: for discrete variable, value = 0                  输出之二划分权值
-               for continuous variable, value = t (the division value)
-'''
-
-
 def InfoGain(DateSet, index):
-    info_gain = InfoEnt(DateSet.values[:, -1])  # info_gain for the whole label 得出当前节点的信息熵
+    '''
+    calculating the information gain of an attribution
+    计算属性的信息增益
+    @param DateSet:      dataframe, the pandas dataframe of the data_set 参数之一数据集
+    @param attr_id: the target attribution in DateSet                    参数之二属性
+    @return info_gain: the information gain of current attribution       输出当前划分的信息增益
+    @return div_value: for discrete variable, value = 0                  输出之二划分权值
+                for continuous variable, value = t (the division value)
+    '''
+    info_gain = InfoEnt(
+        DateSet.values[:, -1])  # info_gain for the whole label 得出当前节点的信息熵
     div_value = 0  # div_value for continuous attribute
 
     n = len(DateSet[index])  # the number of sample
@@ -202,10 +190,10 @@ def InfoGain(DateSet, index):
 
         DateSet = DateSet.sort_values([index],
                                       ascending=1)  # sorting via column 由小到大排序
-        DateSet = DateSet.reset_index(drop=True) # 重新设置索引加上序号
+        DateSet = DateSet.reset_index(drop=True)  # 重新设置索引加上序号
 
-        data_arr = DateSet[index] # 提取当前属性下那一列数据
-        label_arr = DateSet[DateSet.columns[-1]] # 提取最后评估结果标签
+        data_arr = DateSet[index]  # 提取当前属性下那一列数据
+        label_arr = DateSet[DateSet.columns[-1]]  # 提取最后评估结果标签
         # 采用二分法对连续属性进行处理，遍历n-1次求出一个信息熵数组
         for i in range(n - 1):
             div = (data_arr[i] + data_arr[i + 1]) / 2
@@ -229,15 +217,13 @@ def InfoGain(DateSet, index):
     return info_gain, div_value
 
 
-'''
-calculating the information entropy of an attribution
-计算信息熵
-@param label_arr: ndarray, class label array of data_arr
-@return ent: the information entropy of current attribution
-'''
-
-
 def InfoEnt(label_arr):
+    '''
+    calculating the information entropy of an attribution
+    计算信息熵
+    @param label_arr: ndarray, class label array of data_arr
+    @return ent: the information entropy of current attribution
+    '''
     try:
         from math import log2
     except ImportError:

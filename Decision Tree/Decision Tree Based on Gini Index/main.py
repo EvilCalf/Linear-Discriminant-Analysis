@@ -1,4 +1,3 @@
-# using pandas dataframe for .csv read which contains chinese char.
 import pandas as pd
 
 data_file_encode = "utf-8"
@@ -20,13 +19,13 @@ decision_tree.DrawPNG(root, "decision_tree_full.png")
 print("accuracy of full tree: %.3f" %
       decision_tree.PredictAccuracy(root, DataSet_test))
 
-# pre-purning
+# pre-purning 预剪枝
 root = decision_tree.PrePurn(DataSet_train, DataSet_test)
 decision_tree.DrawPNG(root, "decision_tree_pre.png")
 print("accuracy of pre-purning tree: %.3f" %
       decision_tree.PredictAccuracy(root, DataSet_test))
 
-# # post-puring
+# # post-puring 后剪枝
 root = decision_tree.TreeGenerate(DataSet_train)
 decision_tree.PostPurn(root, DataSet_test)
 decision_tree.DrawPNG(root, "decision_tree_post.png")
@@ -34,7 +33,7 @@ print("accuracy of post-purning tree: %.3f" %
       decision_tree.PredictAccuracy(root, DataSet_test))
 
 # print the accuracy
-# k-folds cross prediction
+# k-folds cross prediction k折交叉验证法
 accuracy_scores = []
 n = len(DataSet.index)
 k = 5

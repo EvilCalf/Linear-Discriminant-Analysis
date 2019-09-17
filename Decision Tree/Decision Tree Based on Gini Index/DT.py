@@ -23,56 +23,63 @@ class Node(object):
         self.attr_down = attr_down_init
 
 
-def TreeGenerate(df):
-    '''
-    Branching for decision tree using recursion
+def TreeGenerate(DateSet):
+    ''' 
+    Branching for decision tree using recursion 
     决策树的生成是一个递归的过程
-    @param df: the pandas dataframe of the data_set
-    @return root: Node, the root node of decision tree
+    @param DateSet: the pandas dataframe of the data_set 参数给一个数据集
+    @return root: Node, the root node of decision tree 返回决策树的根节点
     '''
     # generating a new root node
     new_node = Node(None, None, {})
-    label_arr = df[df.columns[-1]]
+    # DateSet的倒数第一列是标签，也就是该数据集下的好坏瓜
+    label_arr = DateSet[DateSet.columns[-1]]
 
     label_count = NodeLabel(label_arr)
     if label_count:  # assert the label_count isn's empty
+        # 该节点最多数的标签即是该结点的判断结果
         new_node.label = max(label_count, key=label_count.get)
 
         # end if there is only 1 class in current node data
         # end if attribution array is empty
+        # 如果只有一种情形或者已经没有标签了，那么决策树就已经构建好了
         if len(label_count) == 1 or len(label_arr) == 0:
             return new_node
 
         # get the optimal attribution for a new branching
-        new_node.attr, div_value = OptAttr_Gini(df)  # via Gini index
+        # 利用基尼系数找出下一个合理的划分标准
+        new_node.attr, div_value = OptAttr_Gini(DateSet)  # via Gini index
 
-        # recursion
-        if div_value == 0:  # categoric variable
-            value_count = ValueCount(df[new_node.attr])
+        # recursion 递归
+        if div_value == 0:  # categoric variable 离散属性
+            value_count = ValueCount(DateSet[new_node.attr])
             for value in value_count:
-                df_v = df[df[new_node.attr].isin([value])]  # get sub set
-                # delete current attribution
-                df_v = df_v.drop(new_node.attr, 1)
-                new_node.attr_down[value] = TreeGenerate(df_v)
+                DateSet_v = DateSet[DateSet[new_node.attr].isin(
+                    [value])]  # get sub set
+                # delete current attribution 删除当前属性
+                DateSet_v = DateSet_v.drop(new_node.attr, 1)
+                # 按照新的属性依据一步步往下生成树
+                new_node.attr_down[value] = TreeGenerate(DateSet_v)
 
-        else:  # continuous variable # left and right child
+        else:  # continuous variable # left and right child 连续属性
             value_l = "<=%.3f" % div_value
             value_r = ">%.3f" % div_value
-            df_v_l = df[df[new_node.attr] <= div_value]  # get sub set
-            df_v_r = df[df[new_node.attr] > div_value]
+            DateSet_v_l = DateSet[DateSet[new_node.attr] <=
+                                  div_value]  # get sub set
+            DateSet_v_r = DateSet[DateSet[new_node.attr] > div_value]
 
-            new_node.attr_down[value_l] = TreeGenerate(df_v_l)
-            new_node.attr_down[value_r] = TreeGenerate(df_v_r)
+            new_node.attr_down[value_l] = TreeGenerate(DateSet_v_l)
+            new_node.attr_down[value_r] = TreeGenerate(DateSet_v_r)
 
     return new_node
 
 
-def Predict(root, df_sample):
+def Predict(root, DateSet_sample):
     '''
     make a predict based on root
 
     @param root: Node, root Node of the decision tree
-    @param df_sample: dataframe, a sample line
+    @param DateSet_sample: dataframe, a sample line
     '''
     try:
         import re  # using Regular Expression to get the number in string
@@ -81,13 +88,13 @@ def Predict(root, df_sample):
 
     while root.attr != None:
         # continuous variable
-        if df_sample[root.attr].dtype == float:
+        if DateSet_sample[root.attr].dtype == float:
             # get the div_value from root.attr_down
             for key in list(root.attr_down):
                 num = re.findall(r"\d+\.?\d*", key)
                 div_value = float(num[0])
                 break
-            if df_sample[root.attr].values[0] <= div_value:
+            if DateSet_sample[root.attr].values[0] <= div_value:
                 key = "<=%.3f" % div_value
                 root = root.attr_down[key]
             else:
@@ -96,7 +103,7 @@ def Predict(root, df_sample):
 
         # categoric variable
         else:
-            key = df_sample[root.attr].values[0]
+            key = DateSet_sample[root.attr].values[0]
             # check whether the attr_value in the child branch
             if key in root.attr_down:
                 root = root.attr_down[key]
@@ -106,34 +113,34 @@ def Predict(root, df_sample):
     return root.label
 
 
-def PredictAccuracy(root, df_test):
+def PredictAccuracy(root, DateSet_test):
     '''
     calculating accuracy of prediction on test set
-
+    预剪枝
     @param root: Node, root Node of the decision tree
-    @param df_test: dataframe, test data set
+    @param DateSet_test: dataframe, test data set
     @return accuracy, float,
     '''
-    if len(df_test.index) == 0: return 0
+    if len(DateSet_test.index) == 0: return 0
     pred_true = 0
-    for i in df_test.index:
-        label = Predict(root, df_test[df_test.index == i])
-        if label == df_test[df_test.columns[-1]][i]:
+    for i in DateSet_test.index:
+        label = Predict(root, DateSet_test[DateSet_test.index == i])
+        if label == DateSet_test[DateSet_test.columns[-1]][i]:
             pred_true += 1
-    return pred_true / len(df_test.index)
+    return pred_true / len(DateSet_test.index)
 
 
-def PrePurn(df_train, df_test):
+def PrePurn(DateSet_train, DateSet_test):
     '''
     pre-purning to generating a decision tree
-
-    @param df_train: dataframe, the training set to generating a tree
-    @param df_test: dataframe, the testing set for purning decision
+    后剪枝
+    @param DateSet_train: dataframe, the training set to generating a tree
+    @param DateSet_test: dataframe, the testing set for purning decision
     @return root: Node, root of the tree using purning
     '''
     # generating a new root node
     new_node = Node(None, None, {})
-    label_arr = df_train[df_train.columns[-1]]
+    label_arr = DateSet_train[DateSet_train.columns[-1]]
 
     label_count = NodeLabel(label_arr)
     if label_count:  # assert the label_count isn's empty
@@ -145,34 +152,35 @@ def PrePurn(df_train, df_test):
             return new_node
 
         # calculating the test accuracy up to current node
-        a0 = PredictAccuracy(new_node, df_test)
+        a0 = PredictAccuracy(new_node, DateSet_test)
 
         # get the optimal attribution for a new branching
-        new_node.attr, div_value = OptAttr_Gini(df_train)  # via Gini index
+        new_node.attr, div_value = OptAttr_Gini(
+            DateSet_train)  # via Gini index
 
         # get the new branch
         if div_value == 0:  # categoric variable
-            value_count = ValueCount(df_train[new_node.attr])
+            value_count = ValueCount(DateSet_train[new_node.attr])
             for value in value_count:
-                df_v = df_train[df_train[new_node.attr].isin(
+                DateSet_v = DateSet_train[DateSet_train[new_node.attr].isin(
                     [value])]  # get sub set
-                df_v = df_v.drop(new_node.attr, 1)
+                DateSet_v = DateSet_v.drop(new_node.attr, 1)
                 # for child node
                 new_node_child = Node(None, None, {})
-                label_arr_child = df_train[df_v.columns[-1]]
+                label_arr_child = DateSet_train[DateSet_v.columns[-1]]
                 label_count_child = NodeLabel(label_arr_child)
                 new_node_child.label = max(label_count_child,
                                            key=label_count_child.get)
                 new_node.attr_down[value] = new_node_child
 
             # calculating to check whether need further branching
-            a1 = PredictAccuracy(new_node, df_test)
+            a1 = PredictAccuracy(new_node, DateSet_test)
             if a1 > a0:  # need branching
                 for value in value_count:
-                    df_v = df_train[df_train[new_node.attr].isin(
-                        [value])]  # get sub set
-                    df_v = df_v.drop(new_node.attr, 1)
-                    new_node.attr_down[value] = TreeGenerate(df_v)
+                    DateSet_v = DateSet_train[DateSet_train[
+                        new_node.attr].isin([value])]  # get sub set
+                    DateSet_v = DateSet_v.drop(new_node.attr, 1)
+                    new_node.attr_down[value] = TreeGenerate(DateSet_v)
             else:
                 new_node.attr = None
                 new_node.attr_down = {}
@@ -180,25 +188,26 @@ def PrePurn(df_train, df_test):
         else:  # continuous variable # left and right child
             value_l = "<=%.3f" % div_value
             value_r = ">%.3f" % div_value
-            df_v_l = df_train[df_train[new_node.attr] <=
-                              div_value]  # get sub set
-            df_v_r = df_train[df_train[new_node.attr] > div_value]
+            DateSet_v_l = DateSet_train[DateSet_train[new_node.attr] <=
+                                        div_value]  # get sub set
+            DateSet_v_r = DateSet_train[
+                DateSet_train[new_node.attr] > div_value]
 
             # for child node
             new_node_l = Node(None, None, {})
             new_node_r = Node(None, None, {})
-            label_count_l = NodeLabel(df_v_l[df_v_r.columns[-1]])
-            label_count_r = NodeLabel(df_v_r[df_v_r.columns[-1]])
+            label_count_l = NodeLabel(DateSet_v_l[DateSet_v_r.columns[-1]])
+            label_count_r = NodeLabel(DateSet_v_r[DateSet_v_r.columns[-1]])
             new_node_l.label = max(label_count_l, key=label_count_l.get)
             new_node_r.label = max(label_count_r, key=label_count_r.get)
             new_node.attr_down[value_l] = new_node_l
             new_node.attr_down[value_r] = new_node_r
 
             # calculating to check whether need further branching
-            a1 = PredictAccuracy(new_node, df_test)
+            a1 = PredictAccuracy(new_node, DateSet_test)
             if a1 > a0:  # need branching
-                new_node.attr_down[value_l] = TreeGenerate(df_v_l)
-                new_node.attr_down[value_r] = TreeGenerate(df_v_r)
+                new_node.attr_down[value_l] = TreeGenerate(DateSet_v_l)
+                new_node.attr_down[value_r] = TreeGenerate(DateSet_v_r)
             else:
                 new_node.attr = None
                 new_node.attr_down = {}
@@ -206,35 +215,36 @@ def PrePurn(df_train, df_test):
     return new_node
 
 
-def PostPurn(root, df_test):
+def PostPurn(root, DateSet_test):
     '''
     pre-purning to generating a decision tree
 
     @param root: Node, root of the tree
-    @param df_test: dataframe, the testing set for purning decision
+    @param DateSet_test: dataframe, the testing set for purning decision
     @return accuracy score through traversal the tree
     '''
     # leaf node
     if root.attr == None:
-        return PredictAccuracy(root, df_test)
+        return PredictAccuracy(root, DateSet_test)
 
     # calculating the test accuracy on children node
     a1 = 0
-    value_count = ValueCount(df_test[root.attr])
+    value_count = ValueCount(DateSet_test[root.attr])
     for value in list(value_count):
-        df_test_v = df_test[df_test[root.attr].isin([value])]  # get sub set
+        DateSet_test_v = DateSet_test[DateSet_test[root.attr].isin(
+            [value])]  # get sub set
         if value in root.attr_down:  # root has the value
-            a1_v = PostPurn(root.attr_down[value], df_test_v)
+            a1_v = PostPurn(root.attr_down[value], DateSet_test_v)
         else:  # root doesn't have value
-            a1_v = PredictAccuracy(root, df_test_v)
+            a1_v = PredictAccuracy(root, DateSet_test_v)
         if a1_v == -1:  # -1 means no pruning back from this child
             return -1
         else:
-            a1 += a1_v * len(df_test_v.index) / len(df_test.index)
+            a1 += a1_v * len(DateSet_test_v.index) / len(DateSet_test.index)
 
     # calculating the test accuracy on this node
     node = Node(None, root.label, {})
-    a0 = PredictAccuracy(node, df_test)
+    a0 = PredictAccuracy(node, DateSet_test)
 
     # check if need pruning
     if a0 >= a1:
@@ -286,18 +296,18 @@ optimal attribution selection in CART algorithm based on gini index
 '''
 
 
-def OptAttr_Gini(df):
+def OptAttr_Gini(DateSet):
     '''
     find the optimal attributes of current data_set based on gini index
 
-    @param df: the pandas dataframe of the data_set
+    @param DateSet: the pandas dataframe of the data_set
     @return opt_attr:  the optimal attribution for branch
     @return div_value: for discrete variable value = 0
                        for continuous variable value = t for bisection divide value
     '''
     gini_index = float('Inf')
-    for attr_id in df.columns[1:-1]:
-        gini_index_tmp, div_value_tmp = InfoGain(df, attr_id)
+    for attr_id in DateSet.columns[1:-1]:
+        gini_index_tmp, div_value_tmp = InfoGain(DateSet, attr_id)
         if gini_index_tmp < gini_index:
             gini_index = gini_index_tmp
             opt_attr = attr_id
@@ -306,12 +316,12 @@ def OptAttr_Gini(df):
     return opt_attr, div_value
 
 
-def GiniIndex(df, attr_id):
+def GiniIndex(DateSet, attr_id):
     '''
     calculating the gini index of an attribution
 
-    @param df:      dataframe, the pandas dataframe of the data_set
-    @param attr_id: the target attribution in df
+    @param DateSet:      dataframe, the pandas dataframe of the data_set
+    @param attr_id: the target attribution in DateSet
     @return gini_index: the gini index of current attribution
     @return div_value: for discrete variable, value = 0
                    for continuous variable, value = t (the division value)
@@ -319,17 +329,18 @@ def GiniIndex(df, attr_id):
     gini_index = 0  # info_gain for the whole label
     div_value = 0  # div_value for continuous attribute
 
-    n = len(df[attr_id])  # the number of sample
+    n = len(DateSet[attr_id])  # the number of sample
 
     # 1.for continuous variable using method of bisection
-    if df[attr_id].dtype == float:
+    if DateSet[attr_id].dtype == float:
         sub_gini = {}  # store the div_value (div) and it's subset gini value
 
-        df = df.sort_values([attr_id], ascending=1)  # sorting via column
-        df = df.reset_index(drop=True)
+        DateSet = DateSet.sort_values([attr_id],
+                                      ascending=1)  # sorting via column
+        DateSet = DateSet.reset_index(drop=True)
 
-        data_arr = df[attr_id]
-        label_arr = df[df.columns[-1]]
+        data_arr = DateSet[attr_id]
+        label_arr = DateSet[DateSet.columns[-1]]
 
         for i in range(n - 1):
             div = (data_arr[i] + data_arr[i + 1]) / 2
@@ -340,8 +351,8 @@ def GiniIndex(df, attr_id):
 
     # 2.for discrete variable (categoric variable)
     else:
-        data_arr = df[attr_id]
-        label_arr = df[df.columns[-1]]
+        data_arr = DateSet[attr_id]
+        label_arr = DateSet[DateSet.columns[-1]]
         value_count = ValueCount(data_arr)
 
         for key in value_count:
@@ -373,19 +384,19 @@ optimal attribution selection in ID3 algorithm based on information entropy
 '''
 
 
-def OptAttr_Ent(df):
+def OptAttr_Ent(DateSet):
     '''
     find the optimal attributes of current data_set based on info entropy
 
-    @param df: the pandas dataframe of the data_set
+    @param DateSet: the pandas dataframe of the data_set
     @return opt_attr:  the optimal attribution for branch
     @return div_value: for discrete variable value = 0
                        for continuous variable value = t for bisection divide value
     '''
     info_gain = 0
 
-    for attr_id in df.columns[1:-1]:
-        info_gian_tmp, div_value_tmp = InfoGain(df, attr_id)
+    for attr_id in DateSet.columns[1:-1]:
+        info_gian_tmp, div_value_tmp = InfoGain(DateSet, attr_id)
         if info_gian_tmp > info_gain:
             info_gain = info_gian_tmp
             opt_attr = attr_id
@@ -394,29 +405,29 @@ def OptAttr_Ent(df):
     return opt_attr, div_value
 
 
-def InfoGain(df, attr_id):
+def InfoGain(DateSet, attr_id):
     '''
     calculating the information gain of an attribution
 
-    @param df:      dataframe, the pandas dataframe of the data_set
-    @param attr_id: the target attribution in df
+    @param DateSet:      dataframe, the pandas dataframe of the data_set
+    @param attr_id: the target attribution in DateSet
     @return info_gain: the information gain of current attribution
     @return div_value: for discrete variable, value = 0
                    for continuous variable, value = t (the division value)
     '''
-    info_gain = InfoEnt(df.values[:, -1])  # info_gain for the whole label
+    info_gain = InfoEnt(DateSet.values[:, -1])  # info_gain for the whole label
     div_value = 0  # div_value for continuous attribute
 
-    n = len(df[attr_id])  # the number of sample
+    n = len(DateSet[attr_id])  # the number of sample
     # 1.for continuous variable using method of bisection
-    if df[attr_id].dtype == float:
+    if DateSet[attr_id].dtype == float:
         sub_info_ent = {}  # store the div_value (div) and it's subset entropy
 
-        df = df.sort([attr_id], ascending=1)  # sorting via column
-        df = df.reset_index(drop=True)
+        DateSet = DateSet.sort([attr_id], ascending=1)  # sorting via column
+        DateSet = DateSet.reset_index(drop=True)
 
-        data_arr = df[attr_id]
-        label_arr = df[df.columns[-1]]
+        data_arr = DateSet[attr_id]
+        label_arr = DateSet[DateSet.columns[-1]]
 
         for i in range(n - 1):
             div = (data_arr[i] + data_arr[i + 1]) / 2
@@ -429,8 +440,8 @@ def InfoGain(df, attr_id):
 
     # 2.for discrete variable (categoric variable)
     else:
-        data_arr = df[attr_id]
-        label_arr = df[df.columns[-1]]
+        data_arr = DateSet[attr_id]
+        label_arr = DateSet[DateSet.columns[-1]]
         value_count = ValueCount(data_arr)
 
         for key in value_count:
