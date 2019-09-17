@@ -1,19 +1,19 @@
-#Vue
+# Vue
 .DS_Store
 node_modules
 /dist
 
-#Eclipse
+# Eclipse
 .classpath
 .project
 .settings/
 
-#Intel Idea
+# Intel Idea
 .idea
 *.iml
 *.iws
 
-#Maven
+# Maven
 log
 target
 pom.xml.tag
@@ -24,16 +24,16 @@ release.properties
 dependcy-reduced-pom.xml
 buildNumber.properties
 
-#java
+# java
 *.class
 *.war
 *.ear
 
-#bak
+# bak
 *.bak
 /bin/
 
-#sbt
+# sbt
 /target/
 /project/target/
 /project/project/target/
@@ -62,8 +62,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-#python
+# python
 __pycache__
 
-#picture
+# picture
 *.png
