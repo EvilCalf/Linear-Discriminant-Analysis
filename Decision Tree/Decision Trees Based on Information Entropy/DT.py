@@ -52,17 +52,18 @@ def TreeGenerate(DateSet):
         # 找出下一个合理的划分标准
         new_node.attr, div_value = OptAttr(DateSet)
 
-        # recursion
-        if div_value == 0:  # categoric variable
+        # recursion 递归
+        if div_value == 0:  # categoric variable 离散属性
             value_count = ValueCount(DateSet[new_node.attr])
             for value in value_count:
                 DateSet_v = DateSet[DateSet[new_node.attr].isin(
                     [value])]  # get sub set
-                # delete current attribution
+                # delete current attribution，删除当前属性
                 DateSet_v = DateSet_v.drop(new_node.attr, 1)
+                # 按照新的属性依据一步步往下生成树
                 new_node.attr_down[value] = TreeGenerate(DateSet_v)
 
-        else:  # continuous variable # left and right child
+        else:  # continuous variable # left and right child 连续属性
             value_l = "<=%.3f" % div_value
             value_r = ">%.3f" % div_value
             DateSet_v_l = DateSet[DateSet[new_node.attr] <=
@@ -78,7 +79,7 @@ def TreeGenerate(DateSet):
 '''
 make a predict based on root
 
-@param root: Node, root Node of the decision tree
+@param root: Node, root Node of the decision tree 输入根节点
 @param DateSet_sample: dataframe, a sample line 
 '''
 
@@ -90,7 +91,7 @@ def Predict(root, DateSet_sample):
         print("module re not found")
 
     while root.attr != None:
-        # continuous variable
+        # continuous variable 连续属性
         if DateSet_sample[root.attr].dtype == float:
             # get the div_value from root.attr_down
             for key in list(root.attr_down):
@@ -104,7 +105,7 @@ def Predict(root, DateSet_sample):
                 key = ">%.3f" % div_value
                 root = root.attr_down[key]
 
-        # categoric variable
+        # categoric variable 离散属性
         else:
             key = DateSet_sample[root.attr].values[0]
             # check whether the attr_value in the child branch
@@ -168,7 +169,7 @@ find the optimal attributes of current data_set
 
 def OptAttr(DateSet):
     info_gain = 0
-    # 遍历除了标签以外的所有因素
+    # 遍历除了标签以外的所有属性，找到信息增益最大的分类标签
     for attr_id in DateSet.columns[1:-1]:
         info_gian_tmp, div_value_tmp = InfoGain(DateSet, attr_id)
         if info_gian_tmp > info_gain:
@@ -181,9 +182,9 @@ def OptAttr(DateSet):
 
 '''
 calculating the information gain of an attribution
-
+计算属性的信息增益
 @param DateSet:      dataframe, the pandas dataframe of the data_set 参数之一数据集
-@param attr_id: the target attribution in DateSet                    参数之二因素
+@param attr_id: the target attribution in DateSet                    参数之二属性
 @return info_gain: the information gain of current attribution       输出当前划分的信息增益
 @return div_value: for discrete variable, value = 0                  输出之二划分权值
                for continuous variable, value = t (the division value)
@@ -200,17 +201,17 @@ def InfoGain(DateSet, index):
         sub_info_ent = {}  # store the div_value (div) and it's subset entropy
 
         DateSet = DateSet.sort_values([index],
-                                      ascending=1)  # sorting via column
-        DateSet = DateSet.reset_index(drop=True)
+                                      ascending=1)  # sorting via column 由小到大排序
+        DateSet = DateSet.reset_index(drop=True) # 重新设置索引加上序号
 
-        data_arr = DateSet[index]
-        label_arr = DateSet[DateSet.columns[-1]]
-
+        data_arr = DateSet[index] # 提取当前属性下那一列数据
+        label_arr = DateSet[DateSet.columns[-1]] # 提取最后评估结果标签
+        # 采用二分法对连续属性进行处理，遍历n-1次求出一个信息熵数组
         for i in range(n - 1):
             div = (data_arr[i] + data_arr[i + 1]) / 2
             sub_info_ent[div] = ((i + 1) * InfoEnt(label_arr[0:i + 1]) / n) \
                                 + ((n - i - 1) * InfoEnt(label_arr[i + 1:-1]) / n)
-        # our goal is to get the min subset entropy sum and it's divide value
+        # our goal is to get the min subset entropy sum and it's divide value，选出信息熵最小的，也就是信息增益最大的
         div_value, sub_info_ent_max = min(sub_info_ent.items(),
                                           key=lambda x: x[1])
         info_gain -= sub_info_ent_max
@@ -220,7 +221,7 @@ def InfoGain(DateSet, index):
         data_arr = DateSet[index]
         label_arr = DateSet[DateSet.columns[-1]]
         value_count = ValueCount(data_arr)
-
+        # 遍历所有当前属性下所有情形，最终求出信息增益
         for key in value_count:
             key_label_arr = label_arr[data_arr == key]
             info_gain -= value_count[key] * InfoEnt(key_label_arr) / n

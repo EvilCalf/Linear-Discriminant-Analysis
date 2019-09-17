@@ -1,5 +1,6 @@
 # using pandas dataframe for .csv read which contains chinese char.
 import pandas as pd
+import random
 
 data_file_encode = "utf-8"  # the watermelon_3.csv is file codec type
 with open("D:\MyProject\机器学习\data\watermelon_3.csv",
@@ -13,10 +14,10 @@ root = decision_tree.TreeGenerate(DateSet)
 
 accuracy_scores = []
 
-# k-folds cross prediction
+# k-folds cross prediction k折交叉验证法
 
 n = len(DateSet.index)
-k = 5
+k = random.randint(4,6)
 for i in range(k):
     m = int(n / k)
     test = []
@@ -29,6 +30,7 @@ for i in range(k):
 
     # test the accuracy
     pred_true = 0
+    # 遍历测试集
     for i in DateSet_test.index:
         label = decision_tree.Predict(root, DateSet[DateSet.index == i])
         if label == DateSet_test[DateSet_test.columns[-1]][i]:
