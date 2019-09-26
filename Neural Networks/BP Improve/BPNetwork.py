@@ -5,7 +5,6 @@ the definition of BP network class
 
 class BP_network:
     def __init__(self):
-
         '''
         initial variables
         '''
@@ -76,8 +75,10 @@ class BP_network:
         # initial threshold for each neuron
         self.h_t = np.zeros(self.h_n)
         self.o_t = np.zeros(self.o_n)
-        for h in range(self.h_n): self.h_t[h] = rand(0, 1)
-        for j in range(self.o_n): self.o_t[j] = rand(0, 1)
+        for h in range(self.h_n):
+            self.h_t[h] = rand(0, 1)
+        for j in range(self.o_n):
+            self.o_t[j] = rand(0, 1)
 
         # initial activation function
         self.af = self.fun[actfun]
@@ -114,7 +115,6 @@ class BP_network:
     '''
     for fixed learning rate
     '''
-
     def BackPropagate(self, x, y):
         '''
         the implementation of BP algorithms on one slide of sample
@@ -183,8 +183,8 @@ class BP_network:
     '''
     for dynamic learning rate
     '''
-
-    def BackPropagate_Dynamic_Lr(self, x, y, d_ho_w_p, d_ih_w_p, d_o_t_p, d_h_t_p, o_grid_p, h_grid_p, alpha):
+    def BackPropagate_Dynamic_Lr(self, x, y, d_ho_w_p, d_ih_w_p, d_o_t_p,
+                                 d_h_t_p, o_grid_p, h_grid_p, alpha):
         '''
         the implementation of BP algorithms on one slide of sample
 
@@ -221,10 +221,12 @@ class BP_network:
             for j in range(self.o_n):
                 # adjust learning rate
                 o_grid_p[j] = o_grid[j]
-                lr = self.lr1[j] * (3 ** lamda[j])
-                self.lr1[j] = 0.5 if lr > 0.5 else (0.005 if lr < 0.005 else lr)
+                lr = self.lr1[j] * (3**lamda[j])
+                self.lr1[j] = 0.5 if lr > 0.5 else (
+                    0.005 if lr < 0.005 else lr)
                 # updating parameter
-                d_ho_w_p[h][j] = self.lr1[j] * o_grid[j] * self.h_v[h] + alpha * d_ho_w_p[h][j]
+                d_ho_w_p[h][j] = self.lr1[j] * o_grid[j] * self.h_v[
+                    h] + alpha * d_ho_w_p[h][j]
                 self.ho_w[h][j] += d_ho_w_p[h][j]
 
         lamda = np.sign(h_grid * h_grid_p)
@@ -232,11 +234,13 @@ class BP_network:
         for i in range(self.i_n):
             for h in range(self.h_n):
                 # adjust learning rate
-                lr = self.lr2[h] * (3 ** lamda[h])
-                self.lr2[j] = 0.5 if lr > 0.5 else (0.005 if lr < 0.005 else lr)
+                lr = self.lr2[h] * (3**lamda[h])
+                self.lr2[j] = 0.5 if lr > 0.5 else (
+                    0.005 if lr < 0.005 else lr)
 
                 # updating parameter
-                d_ih_w_p[i][h] = self.lr2[h] * h_grid[h] * self.i_v[i] + alpha * d_ih_w_p[i][h]
+                d_ih_w_p[i][h] = self.lr2[h] * h_grid[h] * self.i_v[
+                    i] + alpha * d_ih_w_p[i][h]
                 self.ih_w[i][h] += d_ih_w_p[i][h]
 
         for j in range(self.o_n):

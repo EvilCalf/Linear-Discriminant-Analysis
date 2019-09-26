@@ -1,9 +1,6 @@
-"""
-Author: Victoria
-Created on 2017.9.24 11:30
-"""
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 class RBF():
     def __init__(self):
@@ -33,7 +30,7 @@ class RBF():
         grad_y = self.y - y
         self.grad_w = grad_y * self.h
         grad_h = grad_y * self.w
-        self.grad_beta = - grad_h * self.h * self.dist
+        self.grad_beta = -grad_h * self.h * self.dist
         self.grad_cs = grad_h * self.h * 2 * self.beta * (self.x - self.cs)
 
         self.grads = [self.grad_w, self.grad_beta, self.grad_cs]
@@ -66,10 +63,9 @@ class RBF():
             losses.append(loss)
         return losses
 
-
     def loss(self, x, y):
         predict = self.forward(x)
-        mse = 0.5 * (predict-y)**2
+        mse = 0.5 * (predict - y)**2
         return mse
 
     def gradCheck(self, x, y):
@@ -87,19 +83,25 @@ class RBF():
                 for j in range(n):
                     params[k][i, j] += epsilon
                     max_loss = self.loss(x, y)
-                    params[k][i, j] -= 2*epsilon
+                    params[k][i, j] -= 2 * epsilon
                     min_loss = self.loss(x, y)
-                    num_grad = (max_loss - min_loss) / (2*epsilon)
+                    num_grad = (max_loss - min_loss) / (2 * epsilon)
                     params[k][i, j] += epsilon
                     ana_grad = self.grads[k][i, j]
                     #print "ana_grad: {}, num_grad: {}".format(ana_grad, num_grad)
                     if np.abs(num_grad - ana_grad) / np.abs(num_grad) > 1e-7:
                         raise Exception("grad error! {} {} {}".format(k, i, j))
-        print ("grad checking successful")
+        print("grad checking successful")
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     #XOR data
-    train_X = [np.array([[0, 0]]), np.array([[0, 1]]), np.array([[1, 0]]), np.array([[1, 1]])]
+    train_X = [
+        np.array([[0, 0]]),
+        np.array([[0, 1]]),
+        np.array([[1, 0]]),
+        np.array([[1, 1]])
+    ]
     train_y = [0, 1, 1, 0]
 
     #checking grads
@@ -108,12 +110,14 @@ if __name__=="__main__":
 
     #training
     losses = net.train(train_X, train_y)
-    plt.plot(range(len(losses)), losses, 'r-')
-    plt.show()
 
     #predict
     predicts = []
     for i in range(4):
         predict = net.forward(train_X[i])
         predicts.append(predict)
-    print (predicts)
+    print(predicts)
+
+    plt.title("loss")
+    plt.plot(range(len(losses)), losses, 'r-')
+    plt.show()

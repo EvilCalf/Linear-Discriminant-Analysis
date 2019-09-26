@@ -20,22 +20,21 @@ y = Dataset.iloc[:, 4].get_values()
 # output 2 (generation after one hot encoding)
 # 转化成独热编码
 Y = pd.get_dummies(Dataset.iloc[:, 4]).get_values()
-
 '''
 split of train set and test set (using sklearn function)
 '''
 from sklearn.model_selection import train_test_split
 
-train_X, test_X, train_y, test_y, train_Y, test_Y = train_test_split(X, y, Y, test_size=0.5, random_state=42)
-
+train_X, test_X, train_y, test_y, train_Y, test_Y = train_test_split(
+    X, y, Y, test_size=0.5, random_state=42)
 '''
 construction of BP network
 '''
 from BPNetwork import *
 
 bpn1 = BP_network()  # initial a BP network class
-bpn1.CreateNN(4, 5, 3, actfun='Sigmoid', learningrate=0.05)  # build the network
-
+bpn1.CreateNN(4, 5, 3, actfun='Sigmoid',
+              learningrate=0.05)  # build the network
 '''
 experiment of fixed learning rate
 '''
@@ -64,13 +63,13 @@ for i in range(len(test_y)):
 
 test_err = 1 - count / len(test_y)
 print("test error rate: %.3f" % test_err)
-
 '''
 experiment of dynamic learning rate
 '''
 
 bpn2 = BP_network()  # initial a BP network class
-bpn2.CreateNN(4, 5, 3, actfun='Sigmoid', learningrate=0.05)  # build the network
+bpn2.CreateNN(4, 5, 3, actfun='Sigmoid',
+              learningrate=0.05)  # build the network
 
 # parameter training with fixed learning rate initial above
 e = []
@@ -88,7 +87,7 @@ plt.title("training error convergence curve with dynamic learning rate")
 plt.plot(e)
 
 # get the test error in test set
-pred = bpn2.PredLabel(test_X);
+pred = bpn2.PredLabel(test_X)
 count = 0
 for i in range(len(test_y)):
     if pred[i] == test_y[i]: count += 1
