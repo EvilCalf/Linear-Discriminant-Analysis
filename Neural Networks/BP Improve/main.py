@@ -54,12 +54,10 @@ plt.xlabel("epochs")
 plt.ylabel("error")
 plt.ylim(0, 1)
 plt.title("training error convergence curve with fixed learning rate")
-# plt.title("training error convergence curve\n learning rate = 0.05")
 plt.plot(e)
-# plt.show()
 
 # get the test error in test set
-pred = bpn1.PredLabel(test_X);
+pred = bpn1.PredLabel(test_X)
 count = 0
 for i in range(len(test_y)):
     if pred[i] == test_y[i]: count += 1
@@ -88,7 +86,6 @@ plt.ylabel("error")
 plt.ylim(0, 1)
 plt.title("training error convergence curve with dynamic learning rate")
 plt.plot(e)
-# plt.show()
 
 # get the test error in test set
 pred = bpn2.PredLabel(test_X);
