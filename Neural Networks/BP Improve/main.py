@@ -5,14 +5,7 @@ import matplotlib.pyplot as plt
 from urllib.request import urlopen
 
 Dataset = pd.read_csv("D:\MyProject\机器学习\data\iris.csv")
-# visualization of data
-# import seaborn as sns
-# sns.pairplot(dataset, hue='species', vars = ['sepal_length','petal_length'])
-# sns.plt.show()
 
-# generation of input, output, label
-
-# input variables (assignment directlay)
 X = Dataset.iloc[:, :4].get_values()
 
 # label (generation after transform output to categorical variables)
@@ -20,10 +13,12 @@ Dataset.iloc[:, -1] = Dataset.iloc[:, -1].astype('category')
 label = Dataset.iloc[:, 4].values.categories
 
 # output 1 (generation after string categorical variables to numerical values)
+# 把种类字符串换成数字
 Dataset.iloc[:, 4].cat.categories = [0, 1, 2]
 y = Dataset.iloc[:, 4].get_values()
 
 # output 2 (generation after one hot encoding)
+# 转化成独热编码
 Y = pd.get_dummies(Dataset.iloc[:, 4]).get_values()
 
 '''

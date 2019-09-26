@@ -10,19 +10,22 @@ class BP_network:
         initial variables
         '''
         # node number each layer
+        # 每一层的单元数量
         self.i_n = 0
         self.h_n = 0
         self.o_n = 0
 
         # output value for each layer
+        # 每一层的输出数据
         self.i_v = []
         self.h_v = []
         self.o_v = []
 
         # parameters (w, t)
+        # 层与层之间的链接权值
         self.ih_w = []  # weight for each link
         self.ho_w = []
-        self.h_t = []  # threshold for each neuron
+        self.h_t = []  # threshold for each neuron 阈值
         self.o_t = []
 
         # definition of alternative activation functions and it's derivation
