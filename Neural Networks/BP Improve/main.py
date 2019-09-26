@@ -4,11 +4,7 @@ import matplotlib.pyplot as plt
 # online loading
 from urllib.request import urlopen
 
-url = "http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-raw_data = urlopen(url)  # download the file
-attr = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
-dataset = pd.read_csv(raw_data, delimiter=",", header=None, names=attr)
-
+Dataset = pd.read_csv("D:\MyProject\机器学习\data\iris.csv")
 # visualization of data
 # import seaborn as sns
 # sns.pairplot(dataset, hue='species', vars = ['sepal_length','petal_length'])
@@ -16,19 +12,19 @@ dataset = pd.read_csv(raw_data, delimiter=",", header=None, names=attr)
 
 # generation of input, output, label
 
-# input variables (assignment directly)
-X = dataset.iloc[:, :4].get_values()
+# input variables (assignment directlay)
+X = Dataset.iloc[:, :4].get_values()
 
 # label (generation after transform output to categorical variables)
-dataset.iloc[:, -1] = dataset.iloc[:, -1].astype('category')
-label = dataset.iloc[:, 4].values.categories
+Dataset.iloc[:, -1] = Dataset.iloc[:, -1].astype('category')
+label = Dataset.iloc[:, 4].values.categories
 
 # output 1 (generation after string categorical variables to numerical values)
-dataset.iloc[:, 4].cat.categories = [0, 1, 2]
-y = dataset.iloc[:, 4].get_values()
+Dataset.iloc[:, 4].cat.categories = [0, 1, 2]
+y = Dataset.iloc[:, 4].get_values()
 
 # output 2 (generation after one hot encoding)
-Y = pd.get_dummies(dataset.iloc[:, 4]).get_values()
+Y = pd.get_dummies(Dataset.iloc[:, 4]).get_values()
 
 '''
 split of train set and test set (using sklearn function)
