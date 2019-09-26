@@ -52,7 +52,7 @@ class RBF():
         """
         epochs = 200
         losses = []
-        for epoch in range(epochs):
+        for _ in range(epochs):
             loss = 0
             for i in range(len(X)):
                 self.forward(X[i])

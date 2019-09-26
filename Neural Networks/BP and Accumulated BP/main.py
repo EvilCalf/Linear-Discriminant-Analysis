@@ -132,7 +132,7 @@ if __name__ == "__main__":
     #read data from xls file
     train_X = []
     train_Y = []
-    DateSet = pd.read_csv("D:\MyProject\机器学习\data\watermelon_3a.csv")
+    DateSet = pd.read_csv(r"D:\MyProject\机器学习\data\watermelon_3a.csv")
     Density = DateSet.values[:, 1]
     Sugar = DateSet.values[:, 2]
     GoodorNot = DateSet.values[:, 3]
