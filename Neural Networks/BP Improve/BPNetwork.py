@@ -129,10 +129,12 @@ class BP_network:
         self.Pred(x)
 
         # calculate the gradient based on output
+        # 输出层梯度
         o_grid = np.zeros(self.o_n)
         for j in range(self.o_n):
             o_grid[j] = (y[j] - self.o_v[j]) * self.afd(self.o_v[j])
 
+        # 隐藏层梯度
         h_grid = np.zeros(self.h_n)
         for h in range(self.h_n):
             for j in range(self.o_n):
