@@ -299,8 +299,6 @@ class BP_network:
 
         for m in range(len(X)):
             self.Pred(X[m])
-            #             if self.o_v[0] > 0.5:  y.append(1)
-            #             else : y.append(0)
             max_y = self.o_v[0]
             label = 0
             for j in range(1, self.o_n):
