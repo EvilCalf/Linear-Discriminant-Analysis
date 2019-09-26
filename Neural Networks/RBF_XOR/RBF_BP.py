@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*
-'''
-@author: PY131, created on 17.4.29
-this is an implementation of RBF network
-'''
-
-
 class RBP_network:
     '''
     the definition of BP network class
