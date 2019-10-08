@@ -9,7 +9,7 @@ import numpy as np
 # 读取波士顿地区房价信息
 boston = load_boston()
 # 查看数据描述
-print(boston.DESCR)   # 共506条波士顿地区房价信息，每条13项数值特征描述和目标房价
+print(boston.DESCR)  # 共506条波士顿地区房价信息，每条13项数值特征描述和目标房价
 # 查看数据的差异情况
 # print("最大房价：", np.max(boston.target))   # 50
 # print("最小房价：",np.min(boston.target))    # 5
