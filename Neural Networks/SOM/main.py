@@ -5,22 +5,26 @@ import pandas as pd
 
 class SOMNet():
     """
-    input_dims  输入维度
-    output_nums  输出层单元数量
-    sigam0
-    eta0
-    tau1
-    tau2
-    iterations  迭代次数
-    weights  每一个输入层因素到输出层的权值array序列
+    参数：
+    η0 学习效率初始值
+    τ1是一个时间常数（拓扑邻域的大小随着时间收缩）
+    τ2是另一个时间常数（学习效率的大小随着时间收缩）
+    σ0为初始拓扑邻域的半径
+
+    SOM算法过程总结如下：
+    1、初始化 - 为初始权向量wj选择随机值。
+    2、采样 - 从输入空间中抽取一个训练输入向量样本x。
+    3、匹配 - 找到权重向量最接近输入向量的获胜神经元I(x)。
+    4、更新 - 更新权重向量 Δweightji=η(t)⋅Tj,I(x)(t)⋅(xi−weightji)
+    5、继续 - 继续回到步骤2，直到特征映射趋于稳定。
     """
-    def __init__(self, input_dims, output_nums, sigma0, rta0, tau1, tau2, iterations):
+    def __init__(self, input_dims, output_nums, σ0, rta0, τ1, τ2, iterations):
         self.input_dims = input_dims
         self.output_nums = output_nums
-        self.sigma0 = sigma0
-        self.eta0 = eta0
-        self.tau1 = tau1
-        self.tau2 = tau2
+        self.σ0 = σ0
+        self.η0 = η0
+        self.τ1 = τ1
+        self.τ2 = τ2
         self.iterations = iterations
         self.weights = np.random.rand(output_nums, input_dims)
 
@@ -48,7 +52,7 @@ class SOMNet():
         Input:
             x: np.array with shape [1, d].
         Return:
-            index: the index of BMU
+            index: the index of BMU 索引
         """
         dist_square = self.distance(self.weights, x)
         index = np.argmax(dist_square)
@@ -56,24 +60,25 @@ class SOMNet():
 
     def radius(self, iter):
         """
+        计算拓扑邻域半径
         Computer neighborhood radius for current BMU.
         Input:
             iter: the current iteration.
         """
-        sigma = self.sigma0 * np.exp(-iter / self.tau1)
-        return sigma
+        σ = self.σ0 * np.exp(-iter / self.τ1)
+        return σ
 
-    def update(self, x, iter, sigma):
+    def update(self, x, iter, σ):
         """
         Update weight vector for all output unit each iteration.
         Input:
             x: np.array with shape [1, d]. The current input vector.
             iter: int, the current iteration.
-            sigma: float, the current neighborhood function.
+            σ: float, the current neighborhood function. 拓扑邻域半径
         """
-        eta = self.eta0 * np.exp(-iter / self.tau2)
-        neighbor_function = np.exp( - self.distance(self.weights, x) / (2*sigma*sigma) )
-        self.weights = self.weights + eta * neighbor_function * (x - self.weights)
+        η = self.η0 * np.exp(-iter / self.τ2)
+        neighbor_function = np.exp( - self.distance(self.weights, x) / (2*σ*σ) )
+        self.weights = self.weights + η * neighbor_function * (x - self.weights)
 
     def train(self, train_X):
         """
@@ -90,11 +95,11 @@ class SOMNet():
             bmu = self.bmu(x)
 
             #step 4: computer neighborhood radius
-            sigma = self.radius(iter)
+            σ = self.radius(iter)
 
             #step5: update weight vectors for all output unit
-            self.update(x, iter, sigma)
-        print (sigma)
+            self.update(x, iter, σ)
+        print (σ)
 
     def eval(self, x):
         """
@@ -116,12 +121,12 @@ if __name__=="__main__":
 
     #training SOM network
     output_nums = 4
-    sigma0 = 3
-    eta0 = 0.1
-    tau1 = 1
-    tau2 = 1
+    σ0 = 3
+    η0 = 0.1
+    τ1 = 1
+    τ2 = 1
     iterations = 100
-    som_net = SOMNet(2, output_nums, sigma0, eta0, tau1, tau2, iterations)
+    som_net = SOMNet(2, output_nums, σ0, η0, τ1, τ2, iterations)
     som_net.train(train_X)
 
     #plot data in 2 dimension space
