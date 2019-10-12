@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import random
 import pandas as pd
 
-class SOMNet():
+
+class SOMNet:
     """
     参数：
     η0 学习效率初始值
@@ -18,6 +19,7 @@ class SOMNet():
     4、更新 - 更新权重向量 Δweightji=η(t)⋅Tj,I(x)(t)⋅(xi−weightji)
     5、继续 - 继续回到步骤2，直到特征映射趋于稳定。
     """
+
     def __init__(self, input_dims, output_nums, σ0, rta0, τ1, τ2, iterations):
         self.input_dims = input_dims
         self.output_nums = output_nums
@@ -39,10 +41,10 @@ class SOMNet():
             dist_square: np.array with shape [m, 1] when weight is array or float when weight is vector
         """
         m = weight.shape[0]
-        if m==1:
-            dist_square = np.sum((weight-train_x)**2)
+        if m == 1:
+            dist_square = np.sum((weight - train_x) ** 2)
         else:
-            dist_square = np.sum((weight-train_x)**2, axis=1, keepdims=True)
+            dist_square = np.sum((weight - train_x) ** 2, axis=1, keepdims=True)
         return dist_square
 
     def bmu(self, x):
@@ -77,7 +79,7 @@ class SOMNet():
             σ: float, the current neighborhood function. 拓扑邻域半径
         """
         η = self.η0 * np.exp(-iter / self.τ2)
-        neighbor_function = np.exp( - self.distance(self.weights, x) / (2*σ*σ) )
+        neighbor_function = np.exp(-self.distance(self.weights, x) / (2 * σ * σ))
         self.weights = self.weights + η * neighbor_function * (x - self.weights)
 
     def train(self, train_X):
@@ -88,18 +90,18 @@ class SOMNet():
         """
         n = len(train_X)
         for iter in range(self.iterations):
-            #step 2: choose instance from train set randomly
-            x = train_X[random.randint(0, n-1)]
+            # step 2: choose instance from train set randomly
+            x = train_X[random.randint(0, n - 1)]
 
-            #step 3: compute BMU for current instance
+            # step 3: compute BMU for current instance
             bmu = self.bmu(x)
 
-            #step 4: computer neighborhood radius
+            # step 4: computer neighborhood radius
             σ = self.radius(iter)
 
-            #step5: update weight vectors for all output unit
+            # step5: update weight vectors for all output unit
             self.update(x, iter, σ)
-        print (σ)
+        print(σ)
 
     def eval(self, x):
         """
@@ -107,19 +109,20 @@ class SOMNet():
         """
         return self.bmu(x)
 
-if __name__=="__main__":
 
-    #prepare train data
+if __name__ == "__main__":
+
+    # prepare train data
     train_X = []
     train_y = []
     DataSet = pd.read_csv(r"D:\MyProject\机器学习\data\watermelon_3a.csv")
-    X1 = DataSet.values[:, 1] # 取序号为1的一列
-    X2 = DataSet.values[:, 2] # 取序号为2的一列
+    X1 = DataSet.values[:, 1]  # 取序号为1的一列
+    X2 = DataSet.values[:, 2]  # 取序号为2的一列
     for i in range(len(X1)):
-        train_X.append(np.array([[X1[i], X2[i]]])) #组成两个因素为一个array的序列
-    train_y = DataSet.values[:, 3] # 取序号为3的一列即训练集结果
+        train_X.append(np.array([[X1[i], X2[i]]]))  # 组成两个因素为一个array的序列
+    train_y = DataSet.values[:, 3]  # 取序号为3的一列即训练集结果
 
-    #training SOM network
+    # training SOM network
     output_nums = 4
     σ0 = 3
     η0 = 0.1
@@ -129,7 +132,7 @@ if __name__=="__main__":
     som_net = SOMNet(2, output_nums, σ0, η0, τ1, τ2, iterations)
     som_net.train(train_X)
 
-    #plot data in 2 dimension space
+    # plot data in 2 dimension space
     left_top_count = 0
     left_bottom_count = 0
     right_top_count = 0
@@ -140,18 +143,18 @@ if __name__=="__main__":
             style = "bo"
         else:
             style = "r+"
-        print (bmu)
+        print(bmu)
         if bmu == 0:
-            plt.plot([1+left_top_count*0.03], [2], style)
+            plt.plot([1 + left_top_count * 0.03], [2], style)
             left_top_count += 1
         elif bmu == 1:
-            plt.plot([2+right_top_count*0.03], [2], style)
+            plt.plot([2 + right_top_count * 0.03], [2], style)
             right_top_count += 1
         elif bmu == 2:
-            plt.plot([1+left_bottom_count*0.03], [1], style)
+            plt.plot([1 + left_bottom_count * 0.03], [1], style)
             left_bottom_count += 1
         else:
-            plt.plot([2+right_bottom_count*0.03], [1], style)
+            plt.plot([2 + right_bottom_count * 0.03], [1], style)
             right_bottom_count += 1
 
     plt.xlim([1, 3])

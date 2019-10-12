@@ -1,13 +1,13 @@
-'''
+"""
 the definition of BP network class
-'''
+"""
 
 
 class BP_network:
     def __init__(self):
-        '''
+        """
         initial variables
-        '''
+        """
         # node number each layer
         # 每一层的单元数量
         self.i_n = 0
@@ -29,11 +29,10 @@ class BP_network:
 
         # definition of alternative activation functions and it's derivation
         self.fun = {
-            'Sigmoid': Sigmoid,
-            'SigmoidDerivate': SigmoidDerivate,
-            'Tanh': Tanh,
-            'TanhDerivate': TanhDerivate,
-
+            "Sigmoid": Sigmoid,
+            "SigmoidDerivate": SigmoidDerivate,
+            "Tanh": Tanh,
+            "TanhDerivate": TanhDerivate,
             # for more, add here
         }
 
@@ -42,12 +41,12 @@ class BP_network:
         self.lr2 = []  # hidden layer
 
     def CreateNN(self, ni, nh, no, actfun, learningrate):
-        '''
+        """
         build a BP network structure and initial parameters
         @param ni, nh, no: the neuron number of each layer
         @param actfun: string, the name of activation function
         @param learningrate: learning rate of gradient algorithm
-        '''
+        """
 
         # dependent packages
         import numpy as np
@@ -82,17 +81,17 @@ class BP_network:
 
         # initial activation function
         self.af = self.fun[actfun]
-        self.afd = self.fun[actfun + 'Derivate']
+        self.afd = self.fun[actfun + "Derivate"]
 
         # initial learning rate
         self.lr1 = np.ones(self.o_n) * learningrate
         self.lr2 = np.ones(self.h_n) * learningrate
 
     def Pred(self, x):
-        '''
+        """
         predict process through the network
         @param x: the input array for input layer
-        '''
+        """
 
         # activate input layer
         for i in range(self.i_n):
@@ -112,15 +111,16 @@ class BP_network:
                 total += self.h_v[h] * self.ho_w[h][j]
             self.o_v[j] = self.af(total - self.o_t[j])
 
-    '''
+    """
     for fixed learning rate
-    '''
+    """
+
     def BackPropagate(self, x, y):
-        '''
+        """
         the implementation of BP algorithms on one slide of sample
 
         @param x, y: array, input and output of the data sample
-        '''
+        """
 
         # dependent packages
         import numpy as np
@@ -157,12 +157,12 @@ class BP_network:
             self.h_t[h] -= self.lr2[h] * h_grid[h]
 
     def TrainStandard(self, data_in, data_out):
-        '''
+        """
         standard BP training
         @param lr, learning rate, default 0.05
         @return: e, accumulated error
         @return: e_k, error array of each step
-        '''
+        """
         e_k = []
         for k in range(len(data_in)):
             x = data_in[k]
@@ -180,12 +180,14 @@ class BP_network:
 
         return e, e_k
 
-    '''
+    """
     for dynamic learning rate
-    '''
-    def BackPropagate_Dynamic_Lr(self, x, y, d_ho_w_p, d_ih_w_p, d_o_t_p,
-                                 d_h_t_p, o_grid_p, h_grid_p, alpha):
-        '''
+    """
+
+    def BackPropagate_Dynamic_Lr(
+        self, x, y, d_ho_w_p, d_ih_w_p, d_o_t_p, d_h_t_p, o_grid_p, h_grid_p, alpha
+    ):
+        """
         the implementation of BP algorithms on one slide of sample
 
         @param x, y: array, input and output of the data sample
@@ -195,7 +197,7 @@ class BP_network:
 
         @return adjust values (delta) of ho_w, ih_w, o_t, h_t,
                 and gradient value of o_grid, h_grid for this step
-        '''
+        """
 
         # dependent packages
         import numpy as np
@@ -221,12 +223,12 @@ class BP_network:
             for j in range(self.o_n):
                 # adjust learning rate
                 o_grid_p[j] = o_grid[j]
-                lr = self.lr1[j] * (3**lamda[j])
-                self.lr1[j] = 0.5 if lr > 0.5 else (
-                    0.005 if lr < 0.005 else lr)
+                lr = self.lr1[j] * (3 ** lamda[j])
+                self.lr1[j] = 0.5 if lr > 0.5 else (0.005 if lr < 0.005 else lr)
                 # updating parameter
-                d_ho_w_p[h][j] = self.lr1[j] * o_grid[j] * self.h_v[
-                    h] + alpha * d_ho_w_p[h][j]
+                d_ho_w_p[h][j] = (
+                    self.lr1[j] * o_grid[j] * self.h_v[h] + alpha * d_ho_w_p[h][j]
+                )
                 self.ho_w[h][j] += d_ho_w_p[h][j]
 
         lamda = np.sign(h_grid * h_grid_p)
@@ -234,13 +236,13 @@ class BP_network:
         for i in range(self.i_n):
             for h in range(self.h_n):
                 # adjust learning rate
-                lr = self.lr2[h] * (3**lamda[h])
-                self.lr2[j] = 0.5 if lr > 0.5 else (
-                    0.005 if lr < 0.005 else lr)
+                lr = self.lr2[h] * (3 ** lamda[h])
+                self.lr2[j] = 0.5 if lr > 0.5 else (0.005 if lr < 0.005 else lr)
 
                 # updating parameter
-                d_ih_w_p[i][h] = self.lr2[h] * h_grid[h] * self.i_v[
-                    i] + alpha * d_ih_w_p[i][h]
+                d_ih_w_p[i][h] = (
+                    self.lr2[h] * h_grid[h] * self.i_v[i] + alpha * d_ih_w_p[i][h]
+                )
                 self.ih_w[i][h] += d_ih_w_p[i][h]
 
         for j in range(self.o_n):
@@ -254,12 +256,12 @@ class BP_network:
         return d_ho_w_p, d_ih_w_p, d_o_t_p, d_h_t_p, o_grid_p, h_grid_p
 
     def TrainStandard_Dynamic_Lr(self, data_in, data_out):
-        '''
+        """
         standard BP training
         @param lr, learning rate, default 0.05
         @return: e, accumulated error
         @return: e_k, error array of each step
-        '''
+        """
         # dependent packages
         import numpy as np
 
@@ -275,9 +277,9 @@ class BP_network:
         for k in range(len(data_in)):
             x = data_in[k]
             y = data_out[k]
-            d_ho_w_p, d_ih_w_p, d_o_t_p, d_h_t_p, o_grid_p, h_grid_p \
-                = self.BackPropagate_Dynamic_Lr(x, y, d_ho_w_p, d_ih_w_p, d_o_t_p, d_h_t_p,
-                                                o_grid_p, h_grid_p, 0.2)
+            d_ho_w_p, d_ih_w_p, d_o_t_p, d_h_t_p, o_grid_p, h_grid_p = self.BackPropagate_Dynamic_Lr(
+                x, y, d_ho_w_p, d_ih_w_p, d_o_t_p, d_h_t_p, o_grid_p, h_grid_p, 0.2
+            )
 
             # error in train set for each step
             y_delta2 = 0.0
@@ -291,12 +293,12 @@ class BP_network:
         return e, e_k
 
     def PredLabel(self, X):
-        '''
+        """
         predict process through the network
 
         @param X: the input sample set for input layer
         @return: y, array, output set (0,1,2... - class) based on [winner-takes-all]
-        '''
+        """
         import numpy as np
 
         y = []
@@ -314,16 +316,17 @@ class BP_network:
         return np.array(y)
 
 
-'''
+"""
 the definition of activation functions
-'''
+"""
 
 
 def Sigmoid(x):
-    '''
+    """
     definition of sigmoid function and it's derivation
-    '''
+    """
     from math import exp
+
     return 1.0 / (1.0 + exp(-x))
 
 
@@ -332,10 +335,11 @@ def SigmoidDerivate(y):
 
 
 def Tanh(x):
-    '''
+    """
     definition of sigmoid function and it's derivation
-    '''
+    """
     from math import tanh
+
     return tanh(x)
 
 
@@ -343,15 +347,16 @@ def TanhDerivate(y):
     return 1 - y * y
 
 
-'''
+"""
 the definition of random function
-'''
+"""
 
 
 def rand(a, b):
-    '''
+    """
     random value generation for parameter initialization
     @param a,b: the upper and lower limitation of the random value
-    '''
+    """
     from random import random
+
     return (b - a) * random() + a

@@ -2,11 +2,12 @@
 基于信息熵进行划分选择的决策树算法
 """
 import os
-os.environ["PATH"] += os.pathsep + 'D:/Graphviz/bin/'
+
+os.environ["PATH"] += os.pathsep + "D:/Graphviz/bin/"
 
 
 class Node(object):
-    '''
+    """
     definition of decision node class
 
     attr: attribution as parent for a new branching
@@ -16,7 +17,8 @@ class Node(object):
                                '> div_value' for big part
             value: children (Node class)
     label： class label (the majority of current sample labels)
-    '''
+    """
+
     def __init__(self, attr_init=None, label_init=None, attr_down_init={}):
         self.attr = attr_init
         self.label = label_init
@@ -24,12 +26,12 @@ class Node(object):
 
 
 def TreeGenerate(DateSet):
-    ''' 
+    """ 
     Branching for decision tree using recursion 
     决策树的生成是一个递归的过程
     @param DateSet: the pandas dataframe of the data_set 参数给一个数据集
     @return root: Node, the root node of decision tree 返回决策树的根节点
-    '''
+    """
     # generating a new root node
     new_node = Node(None, None, {})
     # DateSet的倒数第一列是标签，也就是该数据集下的好坏瓜
@@ -54,8 +56,7 @@ def TreeGenerate(DateSet):
         if div_value == 0:  # categoric variable 离散属性
             value_count = ValueCount(DateSet[new_node.attr])
             for value in value_count:
-                DateSet_v = DateSet[DateSet[new_node.attr].isin(
-                    [value])]  # get sub set
+                DateSet_v = DateSet[DateSet[new_node.attr].isin([value])]  # get sub set
                 # delete current attribution，删除当前属性
                 DateSet_v = DateSet_v.drop(new_node.attr, 1)
                 # 按照新的属性依据一步步往下生成树
@@ -64,8 +65,7 @@ def TreeGenerate(DateSet):
         else:  # continuous variable # left and right child 连续属性
             value_l = "<=%.3f" % div_value
             value_r = ">%.3f" % div_value
-            DateSet_v_l = DateSet[DateSet[new_node.attr] <=
-                                  div_value]  # get sub set
+            DateSet_v_l = DateSet[DateSet[new_node.attr] <= div_value]  # get sub set
             DateSet_v_r = DateSet[DateSet[new_node.attr] > div_value]
 
             new_node.attr_down[value_l] = TreeGenerate(DateSet_v_l)
@@ -75,11 +75,11 @@ def TreeGenerate(DateSet):
 
 
 def Predict(root, DateSet_sample):
-    '''
+    """
     make a predict based on root
     @param root: Node, root Node of the decision tree 输入根节点
     @param DateSet_sample: dataframe, a sample line 
-    '''
+    """
     try:
         import re  # using Regular Expression to get the number in string
     except ImportError:
@@ -113,12 +113,12 @@ def Predict(root, DateSet_sample):
 
 
 def NodeLabel(label_arr):
-    '''
+    """
     calculating the appeared label and it's counts
 
     @param label_arr: data array for class labels 输入参数为一个arry
     @return label_count: dict, the appeared label and it's counts 输出为不同标签下不同的个数
-    '''
+    """
     label_count = {}  # store count of label
 
     for label in label_arr:
@@ -131,12 +131,12 @@ def NodeLabel(label_arr):
 
 
 def ValueCount(data_arr):
-    '''
+    """
     calculating the appeared value for categoric attribute and it's counts
 
     @param data_arr: data array for an attribute
     @return value_count: dict, the appeared value and it's counts
-    '''
+    """
     value_count = {}  # store count of value
 
     for label in data_arr:
@@ -149,14 +149,14 @@ def ValueCount(data_arr):
 
 
 def OptAttr(DateSet):
-    '''
+    """
     find the optimal attributes of current data_set
     找到最合适的下一个分类的属性
     @param DateSet: the pandas dataframe of the data_set 
     @return opt_attr:  the optimal attribution for branch
     @return div_value: for discrete variable value = 0
                     for continuous variable value = t for bisection divide value
-    '''
+    """
     info_gain = 0
     # 遍历除了标签以外的所有属性，找到信息增益最大的分类属性
     for attr_id in DateSet.columns[1:-1]:
@@ -170,7 +170,7 @@ def OptAttr(DateSet):
 
 
 def InfoGain(DateSet, index):
-    '''
+    """
     calculating the information gain of an attribution
     计算属性的信息增益
     @param DateSet:      dataframe, the pandas dataframe of the data_set 参数之一数据集
@@ -178,9 +178,10 @@ def InfoGain(DateSet, index):
     @return info_gain: the information gain of current attribution       输出当前划分的信息增益
     @return div_value: for discrete variable, value = 0                  输出之二划分权值
                 for continuous variable, value = t (the division value)
-    '''
+    """
     info_gain = InfoEnt(
-        DateSet.values[:, -1])  # info_gain for the whole label 得出当前节点的信息熵
+        DateSet.values[:, -1]
+    )  # info_gain for the whole label 得出当前节点的信息熵
     div_value = 0  # div_value for continuous attribute
 
     n = len(DateSet[index])  # the number of sample
@@ -188,8 +189,7 @@ def InfoGain(DateSet, index):
     if DateSet[index].dtype == float:
         sub_info_ent = {}  # store the div_value (div) and it's subset entropy
 
-        DateSet = DateSet.sort_values([index],
-                                      ascending=1)  # sorting via column 由小到大排序
+        DateSet = DateSet.sort_values([index], ascending=1)  # sorting via column 由小到大排序
         DateSet = DateSet.reset_index(drop=True)  # 重新设置索引加上序号
 
         data_arr = DateSet[index]  # 提取当前属性下那一列数据
@@ -197,11 +197,11 @@ def InfoGain(DateSet, index):
         # 采用二分法对连续属性进行处理，遍历n-1次求出一个信息熵数组
         for i in range(n - 1):
             div = (data_arr[i] + data_arr[i + 1]) / 2
-            sub_info_ent[div] = ((i + 1) * InfoEnt(label_arr[0:i + 1]) / n) \
-                                + ((n - i - 1) * InfoEnt(label_arr[i + 1:-1]) / n)
+            sub_info_ent[div] = ((i + 1) * InfoEnt(label_arr[0 : i + 1]) / n) + (
+                (n - i - 1) * InfoEnt(label_arr[i + 1 : -1]) / n
+            )
         # our goal is to get the min subset entropy sum and it's divide value，选出信息熵最小的，也就是信息增益最大的
-        div_value, sub_info_ent_max = min(sub_info_ent.items(),
-                                          key=lambda x: x[1])
+        div_value, sub_info_ent_max = min(sub_info_ent.items(), key=lambda x: x[1])
         info_gain -= sub_info_ent_max
 
     # 2.for discrete variable (categoric variable)（离散变量）
@@ -218,12 +218,12 @@ def InfoGain(DateSet, index):
 
 
 def InfoEnt(label_arr):
-    '''
+    """
     calculating the information entropy of an attribution
     计算信息熵
     @param label_arr: ndarray, class label array of data_arr
     @return ent: the information entropy of current attribution
-    '''
+    """
     try:
         from math import log2
     except ImportError:
@@ -240,11 +240,11 @@ def InfoEnt(label_arr):
 
 
 def DrawPNG(root, out_file):
-    '''
+    """
     visualization of decision tree from root.
     @param root: Node, the root node for tree.
     @param out_file: str, name and path of output file
-    '''
+    """
     try:
         from pydotplus import graphviz
     except ImportError:
@@ -259,7 +259,7 @@ def DrawPNG(root, out_file):
 
 
 def TreeToGraph(i, g, root):
-    '''
+    """
     build a graph from root on
     @param i: node number in this tree
     @param g: pydotplus.graphviz.Dot() object
@@ -268,7 +268,7 @@ def TreeToGraph(i, g, root):
     @return i: node number after modified
 #     @return g: pydotplus.graphviz.Dot() object after modified
     @return g_node: the current root node in graphviz
-    '''
+    """
     try:
         from pydotplus import graphviz
     except ImportError:
@@ -283,7 +283,6 @@ def TreeToGraph(i, g, root):
 
     for value in list(root.attr_down):
         i, g_child = TreeToGraph(i + 1, g, root.attr_down[value])
-        g.add_edge(
-            graphviz.Edge(g_node, g_child, label=value, fontname="FangSong"))
+        g.add_edge(graphviz.Edge(g_node, g_child, label=value, fontname="FangSong"))
 
     return i, g_node

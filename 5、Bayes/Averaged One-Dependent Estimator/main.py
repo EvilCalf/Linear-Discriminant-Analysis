@@ -6,12 +6,12 @@ import pandas as pd
 
 # 特征字典，后面用到了好多次，干脆当全局变量了
 featureDic = {
-    '色泽': ['浅白', '青绿', '乌黑'],
-    '根蒂': ['硬挺', '蜷缩', '稍蜷'],
-    '敲声': ['沉闷', '浊响', '清脆'],
-    '纹理': ['清晰', '模糊', '稍糊'],
-    '脐部': ['凹陷', '平坦', '稍凹'],
-    '触感': ['硬滑', '软粘']
+    "色泽": ["浅白", "青绿", "乌黑"],
+    "根蒂": ["硬挺", "蜷缩", "稍蜷"],
+    "敲声": ["沉闷", "浊响", "清脆"],
+    "纹理": ["清晰", "模糊", "稍糊"],
+    "脐部": ["凹陷", "平坦", "稍凹"],
+    "触感": ["硬滑", "软粘"],
 }
 
 
@@ -21,9 +21,9 @@ def getDataSet():
     :return: 编码好的数据集以及特征的字典。
     """
     dataSet = pd.read_csv("D:\MyProject\机器学习\data\watermelon_3.csv")
-    dataSet = dataSet.values[:,1:]
+    dataSet = dataSet.values[:, 1:]
 
-    features = ['色泽', '根蒂', '敲声', '纹理', '脐部', '触感', '密度', '含糖量']
+    features = ["色泽", "根蒂", "敲声", "纹理", "脐部", "触感", "密度", "含糖量"]
     numList = []  # [3, 3, 3, 3, 3, 2]
     for i in range(len(features) - 2):
         numList.append(len(featureDic[features[i]]))
@@ -46,9 +46,9 @@ def AODE(dataSet, data, features):
     for classLabel in ["好瓜", "坏瓜"]:
         P = 0.0
         if classLabel == "好瓜":
-            sign = '1'
+            sign = "1"
         else:
-            sign = '0'
+            sign = "0"
         extrDataSet = dataSet[dataSet[:, -1] == sign]  # 抽出类别为sign的数据
         for i in range(n):  # 对于第i个特征
             xi = data[i]
@@ -85,8 +85,7 @@ def calcAccRate(dataSet, features):
     cnt = 0
     for data in dataSet:
         _, _, pre = AODE(dataSet, data, features)
-        if (pre == '好瓜' and data[-1] == '1') \
-            or (pre == '坏瓜' and data[-1] == '0'):
+        if (pre == "好瓜" and data[-1] == "1") or (pre == "坏瓜" and data[-1] == "0"):
             cnt += 1
     return cnt / float(len(dataSet))
 
@@ -101,5 +100,5 @@ def main():
     print(calcAccRate(dataSet, features))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

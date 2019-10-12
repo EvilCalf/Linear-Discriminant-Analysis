@@ -3,9 +3,9 @@ import pandas as pd
 import random
 
 data_file_encode = "utf-8"  # the watermelon_3.csv is file codec type
-with open(r"D:\MyProject\机器学习\data\watermelon_3.csv",
-          mode='r',
-          encoding=data_file_encode) as data_file:
+with open(
+    r"D:\MyProject\机器学习\data\watermelon_3.csv", mode="r", encoding=data_file_encode
+) as data_file:
     DateSet = pd.read_csv(data_file)
 
 import DT as decision_tree
@@ -17,7 +17,7 @@ accuracy_scores = []
 # k-folds cross prediction k折交叉验证法
 
 n = len(DateSet.index)
-k = random.randint(4,6)
+k = random.randint(4, 6)
 for i in range(k):
     m = int(n / k)
     test = []
@@ -50,4 +50,8 @@ print("\naverage accuracy: %.3f" % (accuracy_sum / k))
 # dicision tree visualization using pydotplus.graphviz
 root = decision_tree.TreeGenerate(DateSet)
 
-decision_tree.DrawPNG(root, "Decision Tree/Decision Trees Based on Information Entropy/Decision Trees Based on Information Entropy.png")
+decision_tree.DrawPNG(
+    root,
+    "Decision Tree/Decision Trees Based on Information Entropy/Decision Trees Based on Information Entropy.png",
+)
+

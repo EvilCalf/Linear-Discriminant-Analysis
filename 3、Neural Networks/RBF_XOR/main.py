@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class RBF():
+class RBF:
     def __init__(self):
         self.hidden_num = 4
         self.w = np.random.rand(self.hidden_num, 1)
@@ -16,7 +16,7 @@ class RBF():
             x: np.array with shape [1, 2]
         """
         self.x = x
-        self.dist = np.sum((x - self.cs)**2, axis=1, keepdims=True)
+        self.dist = np.sum((x - self.cs) ** 2, axis=1, keepdims=True)
         self.h = np.exp(-self.beta * self.dist)
         self.y = self.w.T.dot(self.h)
         return self.y[0, 0]
@@ -65,7 +65,7 @@ class RBF():
 
     def loss(self, x, y):
         predict = self.forward(x)
-        mse = 0.5 * (predict - y)**2
+        mse = 0.5 * (predict - y) ** 2
         return mse
 
     def gradCheck(self, x, y):
@@ -88,30 +88,30 @@ class RBF():
                     num_grad = (max_loss - min_loss) / (2 * epsilon)
                     params[k][i, j] += epsilon
                     ana_grad = self.grads[k][i, j]
-                    #print "ana_grad: {}, num_grad: {}".format(ana_grad, num_grad)
+                    # print "ana_grad: {}, num_grad: {}".format(ana_grad, num_grad)
                     if np.abs(num_grad - ana_grad) / np.abs(num_grad) > 1e-7:
                         raise Exception("grad error! {} {} {}".format(k, i, j))
         print("grad checking successful")
 
 
 if __name__ == "__main__":
-    #XOR data
+    # XOR data
     train_X = [
         np.array([[0, 0]]),
         np.array([[0, 1]]),
         np.array([[1, 0]]),
-        np.array([[1, 1]])
+        np.array([[1, 1]]),
     ]
     train_y = [0, 1, 1, 0]
 
-    #checking grads
+    # checking grads
     net = RBF()
     net.gradCheck(train_X[0], train_y[0])
 
-    #training
+    # training
     losses = net.train(train_X, train_y)
 
-    #predict
+    # predict
     predicts = []
     for i in range(4):
         predict = net.forward(train_X[i])
@@ -119,5 +119,5 @@ if __name__ == "__main__":
     print(predicts)
 
     plt.title("loss")
-    plt.plot(range(len(losses)), losses, 'r-')
+    plt.plot(range(len(losses)), losses, "r-")
     plt.show()

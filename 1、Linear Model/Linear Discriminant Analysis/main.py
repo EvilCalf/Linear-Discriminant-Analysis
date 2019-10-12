@@ -33,7 +33,7 @@ cov0 = np.cov(X0, rowvar=False)
 cov1 = np.cov(X1, rowvar=False)
 # 求出ω
 S_w = np.mat(cov0 + cov1)  # 类内散度矩阵
-ω = S_w.I * (μ0 - μ1)  #求出直线ω方向，用散度矩阵的逆矩阵乘上均值之差（均值肯定在直线上，肯定同方向）
+ω = S_w.I * (μ0 - μ1)  # 求出直线ω方向，用散度矩阵的逆矩阵乘上均值之差（均值肯定在直线上，肯定同方向）
 # 画出点、直线
 plt.scatter(X0[:, 0], X0[:, 1], c="b", label="+", marker="+")
 plt.scatter(X1[:, 0], X1[:, 1], c="r", label="-", marker="_")
