@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 
-dataset = pd.read_csv('D:\MyProject\机器学习\data\watermelon_3.csv',
-                      delimiter=",")
+dataset = pd.read_csv('D:\MyProject\机器学习\data\watermelon_3.csv', delimiter=",")
 del dataset['编号']
 print(dataset)
 X = dataset.values[:, :-1]
@@ -52,7 +51,6 @@ def P(colID, attribute, C):  #P(colName=attribute|C) P(色泽=青绿|是)
             curData = X[curJudgeList, colID]
             mean = curData.mean()
             std = curData.std()
-            # print(mean,std)
             continuousPara[(colID, C)] = (mean, std)
         ans = 1 / (math.sqrt(math.pi * 2) * std) * math.exp(
             (-(attribute - mean)**2) / (2 * std * std))
@@ -61,7 +59,6 @@ def P(colID, attribute, C):  #P(colName=attribute|C) P(色泽=青绿|是)
             if X[i, colID] == attribute: ans += 1
         ans = (ans + 1) / (len(curJudgeList) + kindsOfAttribute[colID])
     Pmap[(colID, attribute, C)] = ans
-    # print(ans)
     return ans
 
 
@@ -71,7 +68,6 @@ def predictOne(single):
     for i in range(len(single)):
         ansYes += math.log2(P(i, single[i], '是'))
         ansNo += math.log2(P(i, single[i], '否'))
-    # print(ansYes,ansNo,math.pow(2,ansYes),math.pow(2,ansNo))
     if ansYes > ansNo: return '是'
     else: return '否'
 
