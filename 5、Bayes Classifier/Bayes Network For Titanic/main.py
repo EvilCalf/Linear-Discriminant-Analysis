@@ -1,6 +1,16 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+from pgmpy.estimators import (
+    BayesianEstimator,
+    BdeuScore,
+    BicScore,
+    HillClimbSearch,
+    K2Score,
+)
+from pgmpy.inference import VariableElimination
+from pgmpy.models import BayesianModel
+from sklearn.cluster import KMeans
 
 # import seaborn as sns
 
@@ -77,7 +87,6 @@ full.loc[full["Age"] <= 15, "Age"] = 0
 full.loc[(full["Age"] > 15) & (full["Age"] < 55), "Age"] = 1
 full.loc[full["Age"] >= 55, "Age"] = 2
 full["Pclass"] = full["Pclass"] - 1
-from sklearn.cluster import KMeans
 
 Fare = full["Fare"].values
 Fare = Fare.reshape(-1, 1)
@@ -115,8 +124,6 @@ train.head()
 
 # # 贝叶斯网络建模
 
-from pgmpy.models import BayesianModel
-from pgmpy.estimators import BayesianEstimator
 
 # model = BayesianModel([('Age', 'Pri'), ('Sex', 'Pri'),('Pri','Survived'),('Fare','Pclass'),('Pclass','Survived'),('Cabin','Survived')])
 model = BayesianModel(
@@ -133,31 +140,6 @@ model.fit(
 )  # default equivalent_sample_size=5
 
 
-def showBN(model, save=False):
-    """传入BayesianModel对象，调用graphviz绘制结构图，jupyter中可直接显示"""
-    from graphviz import Digraph
-
-    node_attr = dict(
-        style="filled",
-        shape="box",
-        align="left",
-        fontsize="12",
-        ranksep="0.1",
-        height="0.2",
-    )
-    dot = Digraph(node_attr=node_attr, graph_attr=dict(size="12,12"))
-    seen = set()
-    edges = model.edges()
-    for a, b in edges:
-        dot.edge(a, b)
-    if save:
-        dot.view(cleanup=True)
-    return dot
-
-
-showBN(model)
-
-
 # for cpd in model.get_cpds():
 #    print(cpd)
 predict_data = test.drop(columns=["Survived"], axis=1)
@@ -166,7 +148,6 @@ y_pred = model.predict(predict_data)
 
 (y_pred["Survived"] == test["Survived"]).sum() / len(test)  # 测试集精度
 
-from pgmpy.inference import VariableElimination
 
 model_infer = VariableElimination(model)
 q = model_infer.query(variables=["Survived"], evidence={"Fare": 0})
@@ -179,13 +160,10 @@ print(q)
 
 # # 用结构学习建立模型
 
-from pgmpy.estimators import HillClimbSearch
-from pgmpy.estimators import BdeuScore, K2Score, BicScore
 
 hc = HillClimbSearch(train, scoring_method=BicScore(train))
 best_model = hc.estimate()
-# print(best_model.edges())
-showBN(best_model)
+print(best_model.edges())
 
 best_model.fit(
     train, estimator=BayesianEstimator, prior_type="BDeu"
@@ -210,4 +188,3 @@ kaggle_test_pred = kaggle_test_pred.reindex(columns=["PassengerId", "Survived"])
 kaggle_test_pred["PassengerId"] = np.linspace(892, 1309, 1309 - 892 + 1, dtype=np.int)
 kaggle_test_pred
 kaggle_test_pred.to_csv("D:\MyProject\机器学习\data\kaggle_test_pred.csv", index=0)
-
