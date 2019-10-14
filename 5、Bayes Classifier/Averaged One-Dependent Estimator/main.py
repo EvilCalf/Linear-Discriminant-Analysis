@@ -35,9 +35,9 @@ def getDataSet():
 def AODE(dataSet, data, features):
     """
     AODE(Averaged One-Dependent Estimator)。意思为尝试将每个属性作为超父来构建SPODE。
-    :param dataSet:
-    :param data:
-    :param features:
+    :param dataSet: 训练集
+    :param data: 测试数据
+    :param features: 特征集
     :return:
     """
     m, n = dataSet.shape
@@ -46,25 +46,25 @@ def AODE(dataSet, data, features):
     for classLabel in ["好瓜", "坏瓜"]:
         P = 0.0
         if classLabel == "好瓜":
-            sign = "1"
+            sign = "是"
         else:
-            sign = "0"
+            sign = "否"
         extrDataSet = dataSet[dataSet[:, -1] == sign]  # 抽出类别为sign的数据
         for i in range(n):  # 对于第i个特征
             xi = data[i]
             # 计算classLabel类，第i个属性上取值为xi的样本对总数据集的占比
             Dcxi = extrDataSet[extrDataSet[:, i] == xi]  # 第i个属性上取值为xi的样本数
             Ni = len(featureDic[features[i]])  # 第i个属性可能的取值数
-            Pcxi = (len(Dcxi) + 1) / float(m + 2 * Ni)
+            Pcxi = (len(Dcxi) + 1) / float(m + 2 * Ni)  # P(c|xi)
             # 计算类别为c且在第i和第j个属性上分别为xi和xj的样本，对于类别为c属性为xi的样本的占比
             mulPCond = 1
             for j in range(n):
                 xj = data[j]
                 Dcxij = Dcxi[Dcxi[:, j] == xj]
                 Nj = len(featureDic[features[j]])
-                PCond = (len(Dcxij) + 1) / float(len(Dcxi) + Nj)
-                mulPCond *= PCond
-            P += Pcxi * mulPCond
+                PCond = (len(Dcxij) + 1) / float(len(Dcxi) + Nj)  # p(xj|c,xi)
+                mulPCond *= PCond  # ∏p(xj|c,xi)
+            P += Pcxi * mulPCond  # ∑p(c|X)∏p(xj|c,xi)
         pDir[classLabel] = P
 
     if pDir["好瓜"] > pDir["坏瓜"]:
