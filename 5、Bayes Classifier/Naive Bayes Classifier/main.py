@@ -65,6 +65,10 @@ def P(colID, attribute, C):  # P(colName=attribute|C) P(色泽=青绿|是)
         )
     else:
         for i in curJudgeList:
+            """
+            计算当前类别下的取值(列如颜色中的乌黑)的条件概率
+            即求出当前(属性的个数+1)/(类别总数+可能的取值数)
+            """
             if X[i, colID] == attribute:
                 ans += 1
         ans = (ans + 1) / (len(curJudgeList) + kindsOfAttribute[colID])
@@ -73,6 +77,11 @@ def P(colID, attribute, C):  # P(colName=attribute|C) P(色泽=青绿|是)
 
 
 def predictOne(single):
+    """
+    通过拉普拉斯修正，估计先验概率P(c)
+    再为每个属性估计条件概率P(xi|c),求其联合分布概率(相乘)，对数相加
+    得出正例反例的概率进行比较得大者结论
+    """
     ansYes = math.log2((len(goodList) + 1) / (len(y) + 2))
     ansNo = math.log2((len(badList) + 1) / (len(y) + 2))
     for i in range(len(single)):
