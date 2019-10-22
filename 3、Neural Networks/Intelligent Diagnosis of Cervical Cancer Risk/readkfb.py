@@ -44,19 +44,18 @@ scale = 20
 names = readname(filePath)
 
 for name in names:
-	file1 = filePath + name + ".kfb"
-	label1 = "labels/" + name + ".json"
-	reader = kr.reader()
-	kr.reader.ReadInfo(reader, file1, scale, True)
-	
-	rois = get_roi(label1)
-	for i, roi1 in enumerate(rois):
-		roi = reader.ReadRoi(roi1["x"], roi1["y"], roi1["w"], roi1["h"], scale)
-		for pos in roi1["poses"]:
-			rx = pos["x"] - roi1["x"]
-			ry = pos["y"] - roi1["y"]
-			cv2.rectangle(roi, (rx, ry), (rx + pos["w"], ry + pos["h"]), (0, 255, 0), 4)
-		save_name= name + "roi" + str(i) + ".jpg"
-		cv2.imwrite(save_name, roi)
-		print("save roi img:" + save_name)
+    file1 = filePath + name + ".kfb"
+    label1 = "labels/" + name + ".json"
+    reader = kr.reader()
+    kr.reader.ReadInfo(reader, file1, scale, True)
 
+    rois = get_roi(label1)
+    for i, roi1 in enumerate(rois):
+        roi = reader.ReadRoi(roi1["x"], roi1["y"], roi1["w"], roi1["h"], scale)
+        for pos in roi1["poses"]:
+            rx = pos["x"] - roi1["x"]
+            ry = pos["y"] - roi1["y"]
+            cv2.rectangle(roi, (rx, ry), (rx + pos["w"], ry + pos["h"]), (0, 255, 0), 4)
+        save_name = "PosRoi/" + name + "roi" + str(i) + ".jpg"
+        cv2.imwrite(save_name, roi)
+        print("save roi img:" + save_name)
