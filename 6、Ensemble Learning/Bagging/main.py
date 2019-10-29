@@ -44,3 +44,33 @@ for i in param_range:
 
 plt.plot(param_range, sores_list)
 plt.show()
+
+sores_list = []
+param_range = range(1, X_train.shape[1] + 1)
+for i in param_range:
+    baggingclf_2 = BaggingClassifier(
+        KNeighborsClassifier(),
+        max_samples=0.5,
+        max_features=i,
+        random_state=100,
+        oob_score=True,
+    )  # 一般而言特征选择越少,方差越大
+    baggingclf_2.fit(X_train, y_train)
+    y_pre = baggingclf_2.predict(X_test)
+    sores_list.append(accuracy_score(y_test, y_pre, normalize=True))
+
+plt.plot(param_range, sores_list)
+plt.show()
+
+sores_list = []
+param_range = range(0, 101)
+for i in param_range:
+    baggingclf_2 = BaggingClassifier(
+        KNeighborsClassifier(), max_samples=0.8, max_features=0.8, random_state=i
+    )
+    baggingclf_2.fit(X_train, y_train)
+    y_pre = baggingclf_2.predict(X_test)
+    sores_list.append(accuracy_score(y_test, y_pre, normalize=True))
+
+plt.plot(param_range, sores_list)
+plt.show()
