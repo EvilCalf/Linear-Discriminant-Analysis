@@ -78,8 +78,6 @@ def test_matrix():
     print("Σ Inverse: {}".format(Σ_inverse))
     print("Σ Transform: {}".format(Σ_Trans))
 
-
-#
 def gauss_density_probability(n, x, μ, Σ):
     """
 	计算高斯概率密度。
@@ -91,7 +89,7 @@ def gauss_density_probability(n, x, μ, Σ):
 	返回：
 		p：高斯概率
 	"""
-    Σ_det = np.linalg.det(Σ)
+    Σ_det = np.linalg.det(Σ)# 矩阵求行列式
     divisor = pow(2 * np.pi, n / 2) * np.sqrt(Σ_det)
     exp = np.exp(-0.5 * (x - μ) * Σ.I * (x - μ).T)
     p = exp / divisor
@@ -136,7 +134,7 @@ def posterior_probability(k, steps):
 		classification_cluster：簇分类
 	"""
     α_datasets = [np.mat([1 / k]) for _ in range(k)]  # 初始每一簇先验概率为1/k
-    xx = [np.mat([[x[i], y[i]]]) for i in range(len(x))]
+    data = [np.mat([[x[i], y[i]]]) for i in range(len(x))]
     μ_rand = np.random.randint(0, 30, (1, k))
     # μ_datasets = [np.mat([[x[i], y[i]]]) for i in μ_rand[0]]
     μ_datasets = [
@@ -149,7 +147,7 @@ def posterior_probability(k, steps):
     for step in range(steps):
         p_all = []
         # create cluster
-        classification_temp = locals()
+        classification_temp = locals()  # 返回当前所有的局部变量
         for i in range(k):
             classification_temp["cluster_" + str(i)] = []
         # 后验概率分组
@@ -157,8 +155,7 @@ def posterior_probability(k, steps):
             p_group = []
             for i in range(k):
                 μ = μ_datasets[i]
-                p = gauss_density_probability(2, xx[j], μ, Σ_datasets[i])
-
+                p = gauss_density_probability(2, data[j], μ, Σ_datasets[i])
                 p = p * α_datasets[i].getA()[0][0]
                 p_group.append(p)
             p_sum = np.sum(p_group)
@@ -183,7 +180,7 @@ def posterior_probability(k, steps):
             μ_temp_denominator = 0
             Σ_temp = 0
             α_temp = 0
-            μ_numerator = [p_all[j][i] * xx[j] for j in range(len(x))]
+            μ_numerator = [p_all[j][i] * data[j] for j in range(len(x))]
             for mm in μ_numerator:
                 μ_temp_numerator += mm
 
@@ -195,7 +192,9 @@ def posterior_probability(k, steps):
             μ_datasets.append(μ_dataset)
 
             Σ = [
-                p_all[j][i].getA()[0][0] * (xx[j] - μ_dataset).T * (xx[j] - μ_dataset)
+                p_all[j][i].getA()[0][0]
+                * (data[j] - μ_dataset).T
+                * (data[j] - μ_dataset)
                 for j in range(len(x))
             ]
             for ss in Σ:
