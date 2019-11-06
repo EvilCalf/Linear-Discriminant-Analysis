@@ -13,40 +13,40 @@ y = [0.460, 0.376, 0.264, 0.318, 0.215, 0.237, 0.149, 0.211, 0.091, 0.267,
 	 
 # 矩阵测试
 def test_matrix():
-	sigma = np.mat([[0.2, 0.1], [0.0, 0.1]])
-	sigma_Trans = sigma.T
-	sigma_inverse = sigma.I
-	print("sigma: {}".format(sigma))
-	print("sigma Inverse: {}".format(sigma_inverse))
-	print("sigma Transform: {}".format(sigma_Trans))
+	Σ = np.mat([[0.2, 0.1], [0.0, 0.1]])
+	Σ_Trans = Σ.T
+	Σ_inverse = Σ.I
+	print("Σ: {}".format(Σ))
+	print("Σ Inverse: {}".format(Σ_inverse))
+	print("Σ Transform: {}".format(Σ_Trans))
 
 # 
-def gauss_density_probability(n, x, mu, sigma):
+def gauss_density_probability(n, x, μ, Σ):
 	"""
 	计算高斯概率密度。
 	参数：
 		n：数据维度
 		x：原始数据
-		mu：均值向量
-		sigma：协方差矩阵
+		μ：均值向量
+		Σ：协方差矩阵
 	返回：
 		p：高斯概率
 	"""
-	sigma_det = np.linalg.det(sigma)
-	divisor = pow(2*np.pi, n/2)*np.sqrt(sigma_det)
-	exp = np.exp(-0.5*(x-mu)*sigma.I*(x-mu).T)
+	Σ_det = np.linalg.det(Σ)
+	divisor = pow(2*np.pi, n/2)*np.sqrt(Σ_det)
+	exp = np.exp(-0.5*(x-μ)*Σ.I*(x-μ).T)
 	p = exp/divisor
 	return p
 # 后验概率测试
 def test_posterior_probability():
 	xx = np.mat([[x[0], y[0]]])
-	mu_datasets = [np.mat([[x[5], y[5]]]), np.mat([[x[21], y[21]]]), np.mat([[x[26], y[26]]])]
-	sigma = np.mat([[0.1, 0.0], [0.0, 0.1]])
-	det = np.linalg.det(sigma)
+	μ_datasets = [np.mat([[x[5], y[5]]]), np.mat([[x[21], y[21]]]), np.mat([[x[26], y[26]]])]
+	Σ = np.mat([[0.1, 0.0], [0.0, 0.1]])
+	det = np.linalg.det(Σ)
 	print("det: {}".format(det))
 	p_all = []
-	for mu in mu_datasets:
-		p = gauss_density_probability(2, xx, mu, sigma)
+	for μ in μ_datasets:
+		p = gauss_density_probability(2, xx, μ, Σ)
 		p = p/3
 		p_all.append(p)
 	p_mean = []
@@ -64,19 +64,19 @@ def posterior_probability(k, steps):
 		steps：迭代次数
 	返回：
 		p_all：后验概率
-		mu_datasets：均值矩阵
-		sigma_datasets：协方差矩阵
-		alpha_datasets：混合系数
+		μ_datasets：均值矩阵
+		Σ_datasets：协方差矩阵
+		α_datasets：混合系数
 		classification_cluster：簇分类
 	"""
-	alpha_datasets = [np.mat([1/k]) for _ in range(k)]
+	α_datasets = [np.mat([1/k]) for _ in range(k)]
 	xx = [np.mat([[x[i], y[i]]]) for i in range(len(x))]
-	mu_rand = np.random.randint(0, 30, (1, k))
-	print("random: {}".format(mu_rand[0]))
-# mu_datasets = [np.mat([[x[i], y[i]]]) for i in mu_rand[0]]
-	mu_datasets = [np.mat([[x[5], y[5]]]), np.mat([[x[21], y[21]]]), np.mat([[x[26], y[26]]])]
-	sigma_datasets = [np.mat([[0.1, 0.0], [0.0, 0.1]]) for _ in range(k)]
-# det = np.linalg.det(sigma_datasets[0])
+	μ_rand = np.random.randint(0, 30, (1, k))
+	print("random: {}".format(μ_rand[0]))
+# μ_datasets = [np.mat([[x[i], y[i]]]) for i in μ_rand[0]]
+	μ_datasets = [np.mat([[x[5], y[5]]]), np.mat([[x[21], y[21]]]), np.mat([[x[26], y[26]]])]
+	Σ_datasets = [np.mat([[0.1, 0.0], [0.0, 0.1]]) for _ in range(k)]
+# det = np.linalg.det(Σ_datasets[0])
 	for step in range(steps):
 		p_all = []
 		# create cluster
@@ -87,10 +87,10 @@ def posterior_probability(k, steps):
 		for j in range(len(x)):
 			p_group = []
 			for i in range(k):
-				mu = mu_datasets[i]
-				p = gauss_density_probability(2, xx[j], mu, sigma_datasets[i])
+				μ = μ_datasets[i]
+				p = gauss_density_probability(2, xx[j], μ, Σ_datasets[i])
 
-				p = p*alpha_datasets[i].getA()[0][0]
+				p = p*α_datasets[i].getA()[0][0]
 				p_group.append(p)
 			p_sum = np.sum(p_group)
 			# 取最大后验概率
@@ -106,39 +106,39 @@ def posterior_probability(k, steps):
 
 			
 
-		# 更新 mu, sigma, alpha
-		mu_datasets = []
-		sigma_datasets = []
-		alpha_datasets = []
+		# 更新 μ, Σ, α
+		μ_datasets = []
+		Σ_datasets = []
+		α_datasets = []
 
 		for i in range(k):
-			mu_temp_numerator = 0
-			mu_temp_denominator = 0
-			sigma_temp = 0
-			alpha_temp = 0
-			mu_numerator = [p_all[j][i]*xx[j] for j in range(len(x))]
-			for mm in mu_numerator:
-				mu_temp_numerator += mm
+			μ_temp_numerator = 0
+			μ_temp_denominator = 0
+			Σ_temp = 0
+			α_temp = 0
+			μ_numerator = [p_all[j][i]*xx[j] for j in range(len(x))]
+			for mm in μ_numerator:
+				μ_temp_numerator += mm
 
-			mu_denominator = [p_all[j][i] for j in range(len(x))]
-			for nn in mu_denominator:
-				mu_temp_denominator += nn
+			μ_denominator = [p_all[j][i] for j in range(len(x))]
+			for nn in μ_denominator:
+				μ_temp_denominator += nn
 
-			mu_dataset = mu_temp_numerator/mu_temp_denominator
-			mu_datasets.append(mu_dataset)
+			μ_dataset = μ_temp_numerator/μ_temp_denominator
+			μ_datasets.append(μ_dataset)
 
-			sigma = [p_all[j][i].getA()[0][0]*(xx[j]-mu_dataset).T*(xx[j]-mu_dataset) for j in range(len(x))]
-			for ss in sigma:
-				sigma_temp += ss
-			sigma_dataset = sigma_temp/mu_temp_denominator
-			sigma_datasets.append(sigma_dataset)
+			Σ = [p_all[j][i].getA()[0][0]*(xx[j]-μ_dataset).T*(xx[j]-μ_dataset) for j in range(len(x))]
+			for ss in Σ:
+				Σ_temp += ss
+			Σ_dataset = Σ_temp/μ_temp_denominator
+			Σ_datasets.append(Σ_dataset)
 
-			alpha_new = [p_all[j][i] for j in range(len(x))]
-			for alpha_nn in alpha_new:
-				alpha_temp += alpha_nn
-			alpha_dataset = alpha_temp/len(x)
-			alpha_datasets.append(alpha_dataset)
-	return p_all, mu_datasets, sigma_datasets, alpha_datasets, classification_temp
+			α_new = [p_all[j][i] for j in range(len(x))]
+			for α_nn in α_new:
+				α_temp += α_nn
+			α_dataset = α_temp/len(x)
+			α_datasets.append(α_dataset)
+	return p_all, μ_datasets, Σ_datasets, α_datasets, classification_temp
 	
 def cluster_visiualization(k, steps):
 	"""
@@ -149,7 +149,7 @@ def cluster_visiualization(k, steps):
 	返回：
 		无
 	"""
-	post_probability, mu_datasets, sigma_datasets, alpha_datasets, classification_temp = posterior_probability(k, steps)
+	post_probability, μ_datasets, Σ_datasets, α_datasets, classification_temp = posterior_probability(k, steps)
 	plt.figure(figsize=(8, 8))
 	markers = ['.', 's', '^', '<', '>', 'P']
 	plt.xlim(0.1, 0.9)
