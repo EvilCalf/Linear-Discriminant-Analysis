@@ -32,30 +32,6 @@ def load_data(path, rate):
     )
 
 
-def euclideanDistance_two_loops(train_X, test_X):
-    """ Calculate two-point Euclidean distance
-
-    Args:
-        train_X: Numpy array type training set.
-        test_X: Numpy array type test set.
-    Returns:
-        dists: A numpy array of shape (num_test, num_train) where dists[i, j]
-        is the Euclidean distance between the ith test point and the jth training point.
-    """
-
-    num_test = test_X.shape[0]
-    num_train = train_X.shape[0]
-    dists = np.zeros((num_test, num_train))
-    for i in range(num_test):
-        for j in range(num_train):
-            test_line = test_X[i]
-            train_line = train_X[j]
-            temp = np.subtract(test_line, train_line)
-            temp = np.power(temp, 2)
-            dists[i][j] = np.sqrt(temp.sum())
-    return dists
-
-
 def euclideanDistance_no_loops(train_X, test_X):
     """Calculate two-point Euclidean distance without loops
 
