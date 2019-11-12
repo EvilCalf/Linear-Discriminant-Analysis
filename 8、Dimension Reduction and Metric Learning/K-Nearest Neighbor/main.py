@@ -5,7 +5,7 @@ from collections import Counter
 
 
 def load_data(path, rate):
-    ''' Making dataSet
+    """ Making dataSet
 
     Args:
         path: DataSet file path.
@@ -15,20 +15,25 @@ def load_data(path, rate):
         trainLabel: Training label.
         testSet: Test set.
         testLabel: Test label.
-    '''
+    """
     data = pd.read_csv(path)
     randIndex = random.sample(range(0, len(data)), len(data))
-    trainSet = data.loc[randIndex[:int(len(data) * rate)]]
-    testSet = data.loc[randIndex[int(len(data) * rate):]]
-    trainLabel = trainSet['种类']
-    testLabel = testSet['种类']
-    trainSet.drop('种类', axis=1, inplace=True)
-    testSet.drop('种类', axis=1, inplace=True)
-    return np.array(trainSet), np.array(trainLabel), np.array(testSet), np.array(testLabel)
+    trainSet = data.loc[randIndex[: int(len(data) * rate)]]
+    testSet = data.loc[randIndex[int(len(data) * rate) :]]
+    trainLabel = trainSet["种类"]
+    testLabel = testSet["种类"]
+    trainSet.drop("种类", axis=1, inplace=True)
+    testSet.drop("种类", axis=1, inplace=True)
+    return (
+        np.array(trainSet),
+        np.array(trainLabel),
+        np.array(testSet),
+        np.array(testLabel),
+    )
 
 
 def euclideanDistance_two_loops(train_X, test_X):
-    ''' Calculate two-point Euclidean distance
+    """ Calculate two-point Euclidean distance
 
     Args:
         train_X: Numpy array type training set.
@@ -36,7 +41,7 @@ def euclideanDistance_two_loops(train_X, test_X):
     Returns:
         dists: A numpy array of shape (num_test, num_train) where dists[i, j]
         is the Euclidean distance between the ith test point and the jth training point.
-    '''
+    """
 
     num_test = test_X.shape[0]
     num_train = train_X.shape[0]
@@ -52,10 +57,10 @@ def euclideanDistance_two_loops(train_X, test_X):
 
 
 def euclideanDistance_no_loops(train_X, test_X):
-    '''Calculate two-point Euclidean distance without loops
+    """Calculate two-point Euclidean distance without loops
 
     Input / Output: Same as euclideanDistance_two_loops
-    '''
+    """
 
     num_test = test_X.shape[0]
     num_train = train_X.shape[0]
@@ -75,14 +80,14 @@ def euclideanDistance_no_loops(train_X, test_X):
 
 
 def l1_distance_no_loops(train_X, test_X):
-    '''Calculate two-point L1 distance
+    """Calculate two-point L1 distance
     Args:
         train_X: Numpy array type training set.
         test_X: Numpy array type test set.
     Returns:
         dists: A numpy array of shape (num_test, num_train) where dists[i, j]
         is the Euclidean distance between the ith test point and the jth training point.
-    '''
+    """
 
     num_test = test_X.shape[0]
     num_train = train_X.shape[0]
@@ -99,14 +104,14 @@ def l1_distance_no_loops(train_X, test_X):
 
 
 def predict_labels(dists, labels, k=1):
-    ''' To predict a label for each test point.
+    """ To predict a label for each test point.
     Args:
         dists: a numpy array of shape (num_test, num_train) where dists[i, j].
         labels: each test point real label.
 
     Returns:
         y_pred: knn predict target label.
-    '''
+    """
 
     num_test = dists.shape[0]
     y_pred = []
@@ -120,21 +125,23 @@ def predict_labels(dists, labels, k=1):
 
 
 def getAccuracy(y_pred, y):
-    ''' Calculate the predict accuracy.
+    """ Calculate the predict accuracy.
     Args:
         y_pred: knn predict target label.
         y: each test point real label.
 
     Returns:
         accuracy: average accuracy in test set.
-    '''
+    """
     num_correct = np.sum(y_pred == y)
     accuracy = float(num_correct) / len(y)
     return accuracy
 
 
 if __name__ == "__main__":
-    trainData, trainLabel, testData, testLabel = load_data(r"D:\MyProject\机器学习\data\iris.csv", 0.8)
+    trainData, trainLabel, testData, testLabel = load_data(
+        r"D:\MyProject\机器学习\data\iris.csv", 0.8
+    )
     dists = l1_distance_no_loops(trainData, testData)
     y_pred = predict_labels(dists, trainLabel, k=3)
     accuracy = getAccuracy(y_pred, testLabel)
