@@ -69,3 +69,6 @@ __pycache__
 *.png
 *.jpg
 *.gif
+
+# VSC Counter
+/.VSCodeCounter/
