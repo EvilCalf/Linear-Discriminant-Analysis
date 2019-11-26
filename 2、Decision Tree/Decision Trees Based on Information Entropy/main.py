@@ -4,7 +4,7 @@ import random
 
 data_file_encode = "utf-8"  # the watermelon_3.csv is file codec type
 with open(
-    r"D:\MyProject\机器学习\data\watermelon_3.csv", mode="r", encoding=data_file_encode
+    r"D:\MyProject\Machine Learning\data\watermelon_3.csv", mode="r", encoding=data_file_encode
 ) as data_file:
     DateSet = pd.read_csv(data_file)
 

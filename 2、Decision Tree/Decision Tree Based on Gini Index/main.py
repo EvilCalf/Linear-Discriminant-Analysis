@@ -4,7 +4,7 @@ import random
 
 data_file_encode = "utf-8"
 with open(
-    r"D:\MyProject\机器学习\data\watermelon_2.csv", mode="r", encoding=data_file_encode
+    r"D:\MyProject\Machine Learning\data\watermelon_2.csv", mode="r", encoding=data_file_encode
 ) as data_file:
     DataSet = pd.read_csv(data_file)
 

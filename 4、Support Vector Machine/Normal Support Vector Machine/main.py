@@ -1,5 +1,5 @@
 # input file
-data_file_watermelon_3a = "D:\MyProject\机器学习\data\watermelon_3a.csv"
+data_file_watermelon_3a = "D:\MyProject\Machine Learning\data\watermelon_3a.csv"
 
 import pandas as pd
 import numpy as np

@@ -20,7 +20,7 @@ def getDataSet():
     get watermelon data set 3.0.
     :return: 编码好的数据集以及特征的字典。
     """
-    dataSet = pd.read_csv("D:\MyProject\机器学习\data\watermelon_3.csv")
+    dataSet = pd.read_csv("D:\MyProject\Machine Learning\data\watermelon_3.csv")
     dataSet = dataSet.values[:, 1:]
 
     features = ["色泽", "根蒂", "敲声", "纹理", "脐部", "触感", "密度", "含糖量"]

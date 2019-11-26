@@ -97,7 +97,7 @@ def gradDescent(X, y):  # 梯度下降法
 if __name__ == "__main__":
 
     # read data from csv file
-    workbook = pd.read_csv("D:\MyProject\机器学习\data\watermelon_3a.csv", header=None)
+    workbook = pd.read_csv("D:\MyProject\Machine Learning\data\watermelon_3a.csv", header=None)
     # 在序号三的位置扩展了一列，全为1，使得后续权值可以合并ω和b
     workbook.insert(3, "3", 1)
     X = workbook.values[:, 1:-1]  # 截取从第二列到倒数第一列为止，不含最后一列

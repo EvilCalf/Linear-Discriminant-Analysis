@@ -116,7 +116,7 @@ def getAccuracy(y_pred, y):
 
 if __name__ == "__main__":
     trainData, trainLabel, testData, testLabel = load_data(
-        r"D:\MyProject\机器学习\data\iris.csv", 0.8
+        r"D:\MyProject\Machine Learning\data\iris.csv", 0.8
     )
     dists = l1_distance_no_loops(trainData, testData)
     y_pred = predict_labels(dists, trainLabel, k=3)

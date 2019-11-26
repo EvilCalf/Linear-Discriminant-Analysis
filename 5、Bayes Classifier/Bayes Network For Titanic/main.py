@@ -29,8 +29,8 @@ Cabin => 客舱号 清洗成有无此项，并发现有的生存率高
 Embarked => 登船港口 清洗na,填S
 """
 # combine train and test set.
-train = pd.read_csv(r"D:\MyProject\机器学习\data\train.csv")
-test = pd.read_csv(r"D:\MyProject\机器学习\data\test.csv")
+train = pd.read_csv(r"D:\MyProject\Machine Learning\data\train.csv")
+test = pd.read_csv(r"D:\MyProject\Machine Learning\data\test.csv")
 full = pd.concat([train, test], ignore_index=True)
 full["Embarked"].fillna("S", inplace=True)
 full.Fare.fillna(full[full.Pclass == 3]["Fare"].median(), inplace=True)
@@ -187,4 +187,4 @@ kaggle_test_pred = model.predict(kaggle_test)
 kaggle_test_pred = kaggle_test_pred.reindex(columns=["PassengerId", "Survived"])
 kaggle_test_pred["PassengerId"] = np.linspace(892, 1309, 1309 - 892 + 1, dtype=np.int)
 kaggle_test_pred
-kaggle_test_pred.to_csv("D:\MyProject\机器学习\data\kaggle_test_pred.csv", index=0)
+kaggle_test_pred.to_csv("D:\MyProject\Machine Learning\data\kaggle_test_pred.csv", index=0)

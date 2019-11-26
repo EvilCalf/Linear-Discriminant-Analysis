@@ -83,7 +83,7 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
     return centroids, clusterAssment
 
 
-dataMat = loadDataSet(r"D:\MyProject\机器学习\data\KmeansData.txt")
+dataMat = loadDataSet(r"D:\MyProject\Machine Learning\data\KmeansData.txt")
 myCentroids, clusterAssing = kMeans(dataMat, 4)
 
 import matplotlib

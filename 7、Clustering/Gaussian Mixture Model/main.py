@@ -240,7 +240,7 @@ def cluster_visiualization(k, steps):
         plt.grid()
         plt.scatter(xx, yy, marker=markers[i])
     plt.savefig(
-        r"D:\MyProject\机器学习\7、Clustering\Gaussian Mixture Model\gauss_cluster.png",
+        r"D:\MyProject\Machine Learning\7、Clustering\Gaussian Mixture Model\gauss_cluster.png",
         format="png",
     )
 

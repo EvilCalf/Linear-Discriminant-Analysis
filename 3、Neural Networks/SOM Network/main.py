@@ -115,7 +115,7 @@ if __name__ == "__main__":
     # prepare train data
     train_X = []
     train_y = []
-    DataSet = pd.read_csv(r"D:\MyProject\机器学习\data\watermelon_3a.csv")
+    DataSet = pd.read_csv(r"D:\MyProject\Machine Learning\data\watermelon_3a.csv")
     X1 = DataSet.values[:, 1]  # 取序号为1的一列
     X2 = DataSet.values[:, 2]  # 取序号为2的一列
     for i in range(len(X1)):

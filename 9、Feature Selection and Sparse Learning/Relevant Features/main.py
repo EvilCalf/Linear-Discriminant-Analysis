@@ -136,7 +136,7 @@ def pearsSim(vecA, vecB):
 
 
 if __name__ == '__main__':
-    data = pd.read_csv('D:\MyProject\机器学习\data\watermelon_3.csv')[['色泽', '根蒂', '敲声', '纹理', '脐部', '触感', '密度', '含糖量', '好瓜']]
+    data = pd.read_csv('D:\MyProject\Machine Learning\data\watermelon_3.csv')[['色泽', '根蒂', '敲声', '纹理', '脐部', '触感', '密度', '含糖量', '好瓜']]
     print (data)
     f = Filter(data, 1, 0.8, 6)
     f.relief()

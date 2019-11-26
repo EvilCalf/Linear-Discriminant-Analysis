@@ -7,7 +7,7 @@ import random
 midu = []
 hantanglv = []
 mark = []
-df = pd.read_csv (r'D:\MyProject\机器学习\data\watermelon_3b.csv')
+df = pd.read_csv (r'D:\MyProject\Machine Learning\data\watermelon_3b.csv')
 for i in df.index.values:
     midu.append(df.ix[i].values[1])
     hantanglv.append(df.ix[i].values[2])

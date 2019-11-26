@@ -8,7 +8,7 @@ color = sns.color_palette()
 # 数据print精度
 pd.set_option("precision", 3)
 
-df = pd.read_csv("D:\MyProject\机器学习\data\winequality-red.csv", sep=";")
+df = pd.read_csv("D:\MyProject\Machine Learning\data\winequality-red.csv", sep=";")
 df.describe()
 
 plt.style.use("ggplot")

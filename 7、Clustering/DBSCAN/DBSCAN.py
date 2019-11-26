@@ -9,7 +9,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 
-data = pd.read_csv(r"D:\MyProject\机器学习\data\watermelon_3b.csv")
+data = pd.read_csv(r"D:\MyProject\Machine Learning\data\watermelon_3b.csv")
 data.drop(["编号"], axis=1, inplace=True)
 
 data = data[["密度", "含糖率"]]

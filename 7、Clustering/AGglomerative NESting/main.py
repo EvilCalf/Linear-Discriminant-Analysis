@@ -3,7 +3,7 @@ import pylab as pl
 import pandas as pd
 import numpy as np
 
-dataset = pd.read_csv(r"D:\MyProject\机器学习\data\watermelon_3b.csv")
+dataset = pd.read_csv(r"D:\MyProject\Machine Learning\data\watermelon_3b.csv")
 dataset = np.array(dataset)
 dataset = dataset.tolist()
 

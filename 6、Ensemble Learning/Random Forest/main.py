@@ -210,7 +210,7 @@ def random_forest(train, test, max_depth, min_size, sample_size, n_trees, n_feat
 # Test the random forest algorithm
 seed(2)
 # load and prepare data
-filename = "D:\MyProject\机器学习\data\sonar.all-data.csv"
+filename = "D:\MyProject\Machine Learning\data\sonar.all-data.csv"
 dataset = load_csv(filename)
 # convert string attributes to integers
 for i in range(0, len(dataset[0]) - 1):
