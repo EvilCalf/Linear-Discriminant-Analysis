@@ -80,7 +80,7 @@ def processData(df):
     df["discount_jian"] = df["Discount_rate"].apply(getDiscountJian)
     df["discount_type"] = df["Discount_rate"].apply(getDiscountType)
     print(df["discount_rate"].unique())
-    # convert distance
+    # convert distance 把Distance列空缺数据填为-1
     df["distance"] = df["Distance"].fillna(-1).astype(int)
     return df
 

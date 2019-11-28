@@ -72,3 +72,6 @@ __pycache__
 
 # VSC Counter
 /.VSCodeCounter/
+
+# data
+/data/
