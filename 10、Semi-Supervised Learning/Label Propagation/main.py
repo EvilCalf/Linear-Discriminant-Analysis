@@ -1,8 +1,6 @@
 import time
 import math
 import numpy as np
-from sklearn.semi_supervised import LabelPropagation
-
 
 # return k neighbors index
 def navie_knn(dataSet, query, k):
