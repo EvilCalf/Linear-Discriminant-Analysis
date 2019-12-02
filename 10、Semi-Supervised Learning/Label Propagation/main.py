@@ -2,6 +2,7 @@ import time
 import math
 import numpy as np
 
+
 # return k neighbors index
 def navie_knn(dataSet, query, k):
     numSamples = dataSet.shape[0]
@@ -81,7 +82,7 @@ def labelPropagation(
     changed = np.abs(pre_label_function - label_function).sum()
     while iter < max_iter and changed > tol:
         if iter % 1 == 0:
-            print("---> Iteration %d/%d, changed: %f", (iter, max_iter, changed))
+            print("---> Iteration %d/%d, changed: %f" % (iter, max_iter, changed))
         pre_label_function = label_function
         iter += 1
 
