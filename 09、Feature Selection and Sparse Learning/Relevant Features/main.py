@@ -24,7 +24,11 @@ class Filter:
         new_data = pd.DataFrame()
         for one in self.__feature[:-1]:
             col = self.__data[one]
-            if (str(list(col)[0]).split(".")[0]).isdigit() or str(list(col)[0]).isdigit() or (str(list(col)[0]).split('-')[-1]).split(".")[-1].isdigit():
+            if (
+                (str(list(col)[0]).split(".")[0]).isdigit()
+                or str(list(col)[0]).isdigit()
+                or (str(list(col)[0]).split("-")[-1]).split(".")[-1].isdigit()
+            ):
                 new_data[one] = self.__data[one]
                 # print '%s 是数值型' % one
             else:
@@ -60,11 +64,27 @@ class Filter:
         row = data.iloc[index]
         nearhit = data.iloc[NearHit]
         nearmiss = data.iloc[NearMiss]
-        if (str(row[feature]).split(".")[0]).isdigit() or str(row[feature]).isdigit() or (str(row[feature]).split('-')[-1]).split(".")[-1].isdigit():
+        if (
+            (str(row[feature]).split(".")[0]).isdigit()
+            or str(row[feature]).isdigit()
+            or (str(row[feature]).split("-")[-1]).split(".")[-1].isdigit()
+        ):
             max_feature = data[feature].max()
             min_feature = data[feature].min()
-            right = pow(round(abs(row[feature] - nearhit[feature]) / (max_feature - min_feature), 2), 2)
-            wrong = pow(round(abs(row[feature] - nearmiss[feature]) / (max_feature - min_feature), 2), 2)
+            right = pow(
+                round(
+                    abs(row[feature] - nearhit[feature]) / (max_feature - min_feature),
+                    2,
+                ),
+                2,
+            )
+            wrong = pow(
+                round(
+                    abs(row[feature] - nearmiss[feature]) / (max_feature - min_feature),
+                    2,
+                ),
+                2,
+            )
             # w = wrong - right
         else:
             right = 0 if row[feature] == nearhit[feature] else 1
@@ -81,33 +101,36 @@ class Filter:
         m, n = np.shape(self.__data)  # m为行数，n为列数
         score = []
         sample_index = random.sample(range(0, m), self.__sample_num)
-        print ('采样样本索引为 %s ',sample_index)
+        print("采样样本索引为 %s ", sample_index)
         num = 1
-        for i in sample_index:    # 采样次数
+        for i in sample_index:  # 采样次数
             one_score = dict()
             row = sample.iloc[i]
             NearHit, NearMiss = self.get_neighbors(row)
-            print ('第 %s 次采样，样本index为 %s，其NearHit行索引为 %s ，NearMiss行索引为 %s' ,(num, i, NearHit, NearMiss))
+            print(
+                "第 %s 次采样，样本index为 %s，其NearHit行索引为 %s ，NearMiss行索引为 %s",
+                (num, i, NearHit, NearMiss),
+            )
             for f in self.__feature[0:-1]:
                 w = self.get_weight(f, i, NearHit, NearMiss)
                 one_score[f] = w
-                print ('特征 %s 的权重为 %s.' % (f, w))
+                print("特征 %s 的权重为 %s." % (f, w))
             score.append(one_score)
             num += 1
         f_w = pd.DataFrame(score)
-        print ('采样各样本特征权重如下：')
-        print (f_w)
-        print ('平均特征权重如下：')
-        print (f_w.mean())
+        print("采样各样本特征权重如下：")
+        print(f_w)
+        print("平均特征权重如下：")
+        print(f_w.mean())
         return f_w.mean()
 
     # 返回最终选取的特征
     def get_final(self):
-        f_w = pd.DataFrame(self.relief(), columns=['weight'])
-        final_feature_t = f_w[f_w['weight'] > self.__t]
-        print (final_feature_t)
-        final_feature_k = f_w.sort_values('weight').head(self.__k)
-        print (final_feature_k)
+        f_w = pd.DataFrame(self.relief(), columns=["weight"])
+        final_feature_t = f_w[f_w["weight"] > self.__t]
+        print(final_feature_t)
+        final_feature_k = f_w.sort_values("weight").head(self.__k)
+        print(final_feature_k)
         return final_feature_t, final_feature_k
 
 
@@ -135,11 +158,12 @@ def pearsSim(vecA, vecB):
         return 0.5 + 0.5 * np.corrcoef(vecA, vecB, rowvar=0)[0][1]
 
 
-if __name__ == '__main__':
-    data = pd.read_csv('D:\MyProject\Machine Learning\data\watermelon_3.csv')[['色泽', '根蒂', '敲声', '纹理', '脐部', '触感', '密度', '含糖量', '好瓜']]
-    print (data)
+if __name__ == "__main__":
+    data = pd.read_csv("D:\MyProject\Machine Learning\data\watermelon_3.csv")[
+        ["色泽", "根蒂", "敲声", "纹理", "脐部", "触感", "密度", "含糖量", "好瓜"]
+    ]
+    print(data)
     f = Filter(data, 1, 0.8, 6)
     f.relief()
     # f.get_final()
-
 

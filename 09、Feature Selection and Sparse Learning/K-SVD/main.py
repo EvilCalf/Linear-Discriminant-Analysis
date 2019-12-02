@@ -5,8 +5,7 @@ from matplotlib import pyplot as plt
 
 
 class KSVD(object):
-    def __init__(self, n_components, max_iter=30, tol=1e-6,
-                 n_nonzero_coefs=None):
+    def __init__(self, n_components, max_iter=30, tol=1e-6, n_nonzero_coefs=None):
         """
         稀疏模型Y = DX，Y为样本矩阵，使用KSVD动态更新字典矩阵D和稀疏矩阵X
         :param n_components: 字典所含原子个数（字典的列数）
@@ -26,7 +25,7 @@ class KSVD(object):
         初始化字典矩阵
         """
         u, s, v = np.linalg.svd(y)
-        self.dictionary = u[:, :self.n_components]
+        self.dictionary = u[:, : self.n_components]
 
     def _update_dict(self, y, d, x):
         """
@@ -50,17 +49,21 @@ class KSVD(object):
         """
         self._initialize(y)
         for i in range(self.max_iter):
-            x = linear_model.orthogonal_mp(self.dictionary, y, n_nonzero_coefs=self.n_nonzero_coefs)
+            x = linear_model.orthogonal_mp(
+                self.dictionary, y, n_nonzero_coefs=self.n_nonzero_coefs
+            )
             e = np.linalg.norm(y - np.dot(self.dictionary, x))
             if e < self.tol:
                 break
             self._update_dict(y, self.dictionary, x)
 
-        self.sparsecode = linear_model.orthogonal_mp(self.dictionary, y, n_nonzero_coefs=self.n_nonzero_coefs)
+        self.sparsecode = linear_model.orthogonal_mp(
+            self.dictionary, y, n_nonzero_coefs=self.n_nonzero_coefs
+        )
         return self.dictionary, self.sparsecode
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     im_ascent = scipy.misc.ascent().astype(np.float)
     ksvd = KSVD(300)
     dictionary, sparsecode = ksvd.fit(im_ascent)
