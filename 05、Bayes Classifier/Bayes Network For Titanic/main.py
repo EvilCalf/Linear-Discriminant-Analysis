@@ -187,4 +187,6 @@ kaggle_test_pred = model.predict(kaggle_test)
 kaggle_test_pred = kaggle_test_pred.reindex(columns=["PassengerId", "Survived"])
 kaggle_test_pred["PassengerId"] = np.linspace(892, 1309, 1309 - 892 + 1, dtype=np.int)
 kaggle_test_pred
-kaggle_test_pred.to_csv("D:\MyProject\Machine Learning\data\kaggle_test_pred.csv", index=0)
+kaggle_test_pred.to_csv(
+    "D:\MyProject\Machine Learning\data\kaggle_test_pred.csv", index=0
+)

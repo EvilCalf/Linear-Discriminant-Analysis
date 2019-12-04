@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
 
-dataset = pd.read_csv("D:\MyProject\Machine Learning\data\watermelon_3.csv", delimiter=",")
+dataset = pd.read_csv(
+    "D:\MyProject\Machine Learning\data\watermelon_3.csv", delimiter=","
+)
 del dataset["编号"]
 print(dataset)
 X = dataset.values[:, :-1]
