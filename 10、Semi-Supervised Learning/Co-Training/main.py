@@ -1,9 +1,9 @@
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
-from sklearn.metrics import classification_report
 from sklearn.datasets import make_classification
-from classifiers import CoTrainingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+from sklearn.svm import LinearSVC
 
+from classifiers import CoTrainingClassifier
 
 if __name__ == "__main__":
     N_SAMPLES = 25000
@@ -51,4 +51,3 @@ if __name__ == "__main__":
         X_test[:, : N_FEATURES // 2], X_test[:, N_FEATURES // 2 :]
     )
     print(classification_report(y_test, y_pred))
-

@@ -1,6 +1,7 @@
-import numpy as np
-import random
 import copy
+import random
+
+import numpy as np
 
 
 class CoTrainingClassifier(object):
@@ -204,4 +205,3 @@ class CoTrainingClassifier(object):
         _epsilon = 0.0001
         assert all(abs(sum(y_dist) - 1) <= _epsilon for y_dist in y_proba)
         return y_proba
-

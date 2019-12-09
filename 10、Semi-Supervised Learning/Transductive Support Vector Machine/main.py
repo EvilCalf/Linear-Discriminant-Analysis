@@ -1,9 +1,10 @@
 # coding:utf-8
+import pickle
+
 import numpy as np
 import sklearn.svm as svm
 from sklearn.externals import joblib
-import pickle
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import cross_val_score, train_test_split
 
 
 class TSVM(object):

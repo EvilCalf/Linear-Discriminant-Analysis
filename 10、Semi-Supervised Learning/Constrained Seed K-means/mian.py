@@ -1,10 +1,8 @@
 from collections import defaultdict
 from math import sqrt
+
 import pandas as pd
-
-# 使用ARI进行K-means聚类性能评估
 from sklearn import metrics
-
 
 # 0:0 1 8 15 26
 # 1:11 24 28 35 4
